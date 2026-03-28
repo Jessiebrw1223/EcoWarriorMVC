@@ -1,0 +1,71 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero-section py-5">
+    <div class="container py-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <span class="badge rounded-pill text-bg-success mb-3">Plantilla MVC</span>
+                <h1 class="display-5 fw-bold mb-3">Proyecto MVC basado en tu referencia EcoWarrior</h1>
+                <p class="lead text-secondary mb-4">
+                    Esta versión transforma tu idea en una estructura ASP.NET Core MVC clara, ordenada y lista para seguir creciendo.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a class="btn btn-success btn-lg" asp-controller="Productos" asp-action="Index">Ver productos</a>
+                    <a class="btn btn-outline-dark btn-lg" asp-controller="Home" asp-action="Contacto">Solicitar demo</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="stats-card p-4 rounded-4 shadow-sm bg-white">
+                    <div class="row g-3 text-center">
+                        <div class="col-4">
+                            <div class="metric">@Model.TotalProductos</div>
+                            <small>Productos</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="metric">@Model.TotalCategorias</div>
+                            <small>Categorías</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="metric">@Model.StockDisponible</div>
+                            <small>Stock</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Productos destacados</h2>
+                <p class="text-secondary mb-0">Ejemplo de consumo de datos desde el controlador hacia la vista.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var item in Model.Destacados)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm product-card">
+                        <img src="@item.ImagenUrl" class="card-img-top" alt="@item.Nombre" />
+                        <div class="card-body">
+                            <span class="badge text-bg-light mb-2">@item.Categoria</span>
+                            <h5 class="card-title">@item.Nombre</h5>
+                            <p class="card-text text-secondary">@item.Descripcion</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold fs-5">S/ @item.Precio</span>
+                                <a class="btn btn-outline-success" asp-controller="Productos" asp-action="Detalle" asp-route-id="@item.Id">Detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,50 @@
+@model ContactoViewModel
+@{
+    ViewData["Title"] = "Contacto";
+}
+
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5">
+                    <h1 class="fw-bold mb-3">Contacto</h1>
+                    <p class="text-secondary">Ejemplo de formulario MVC con validaciones y mensaje de éxito.</p>
+
+                    @if (TempData["MensajeExito"] is string mensaje)
+                    {
+                        <div class="alert alert-success">@mensaje</div>
+                    }
+
+                    <form asp-action="Contacto" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label"></label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Correo" class="form-label"></label>
+                            <input asp-for="Correo" class="form-control" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Mensaje" class="form-label"></label>
+                            <textarea asp-for="Mensaje" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Mensaje" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
