@@ -8,6 +8,21 @@ namespace EcoWarriorMVC.Controllers;
 
 public class HomeController(IProductoService productoService) : Controller
 {
+    [HttpGet]
+    public IActionResult Login() => View(new LoginViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Login(LoginViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
     public IActionResult Index()
     {
         var productos = productoService.ObtenerTodos();
