@@ -1,0 +1,58 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EcoWarrior MVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="login-body">
+    <section class="login-screen">
+        <div class="login-card">
+            <div class="login-logo" aria-hidden="true"></div>
+            <h1>Bienvenido de nuevo, Eco Warrior</h1>
+            <p class="login-subtitle">Tu ciudad te necesita para seguir creciendo.</p>
+
+            <form asp-action="Index" asp-controller="Home" method="get" class="login-form" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
+                <div class="login-field-group">
+                    <label for="Correo" class="login-label">Correo</label>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">&#64;</span>
+                        <input asp-for="Correo" class="login-input" placeholder="tu@correo.com" />
+                    </div>
+                    <span asp-validation-for="Correo" class="text-danger small"></span>
+                </div>
+
+                <div class="login-field-group">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="Contrasena" class="login-label mb-0">Contrasena</label>
+                        <a href="#" class="login-link-small">Olvidaste tu contrasena?</a>
+                    </div>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">*</span>
+                        <input asp-for="Contrasena" class="login-input" placeholder="********" />
+                    </div>
+                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="login-button">Iniciar Sesion</button>
+            </form>
+
+            <p class="login-register">No tienes una cuenta? <a href="#">Registrate aqui</a></p>
+        </div>
+    </section>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

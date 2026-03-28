@@ -1,71 +1,117 @@
 @model HomeViewModel
 @{
     ViewData["Title"] = "Inicio";
+    ViewData["IsDashboard"] = true;
 }
 
-<section class="hero-section py-5">
-    <div class="container py-4">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-6">
-                <span class="badge rounded-pill text-bg-success mb-3">Plantilla MVC</span>
-                <h1 class="display-5 fw-bold mb-3">Proyecto MVC basado en tu referencia EcoWarrior</h1>
-                <p class="lead text-secondary mb-4">
-                    Esta versión transforma tu idea en una estructura ASP.NET Core MVC clara, ordenada y lista para seguir creciendo.
-                </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a class="btn btn-success btn-lg" asp-controller="Productos" asp-action="Index">Ver productos</a>
-                    <a class="btn btn-outline-dark btn-lg" asp-controller="Home" asp-action="Contacto">Solicitar demo</a>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="stats-card p-4 rounded-4 shadow-sm bg-white">
-                    <div class="row g-3 text-center">
-                        <div class="col-4">
-                            <div class="metric">@Model.TotalProductos</div>
-                            <small>Productos</small>
-                        </div>
-                        <div class="col-4">
-                            <div class="metric">@Model.TotalCategorias</div>
-                            <small>Categorías</small>
-                        </div>
-                        <div class="col-4">
-                            <div class="metric">@Model.StockDisponible</div>
-                            <small>Stock</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link active" href="#">Panel</a>
+                <a class="side-link" href="#">Retos</a>
+                <a class="side-link" href="#">Clasificacion</a>
+                <a class="side-link" href="#">Comunidad</a>
+            </nav>
         </div>
-    </div>
-</section>
+        <a class="new-challenge-btn" asp-controller="Productos" asp-action="Index">+ Nuevo Reto</a>
+    </aside>
 
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold mb-1">Productos destacados</h2>
-                <p class="text-secondary mb-0">Ejemplo de consumo de datos desde el controlador hacia la vista.</p>
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Vista General</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@Model.StockDisponible pts</strong>
+                </div>
+                <div>
+                    <strong>Mateo Silva</strong>
+                    <small>@@mateo_eco</small>
+                </div>
+                <div class="avatar-pill">MS</div>
             </div>
-        </div>
+        </header>
 
-        <div class="row g-4">
-            @foreach (var item in Model.Destacados)
-            {
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm product-card">
-                        <img src="@item.ImagenUrl" class="card-img-top" alt="@item.Nombre" />
-                        <div class="card-body">
-                            <span class="badge text-bg-light mb-2">@item.Categoria</span>
-                            <h5 class="card-title">@item.Nombre</h5>
-                            <p class="card-text text-secondary">@item.Descripcion</p>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="fw-bold fs-5">S/ @item.Precio</span>
-                                <a class="btn btn-outline-success" asp-controller="Productos" asp-action="Detalle" asp-route-id="@item.Id">Detalle</a>
+        <main class="dashboard-content">
+            <section class="welcome-row">
+                <div>
+                    <h1>Hola, Mateo! &#127811;</h1>
+                    <p>Has ahorrado aproximadamente <strong>12kg de CO2</strong> este mes.</p>
+                </div>
+                <button type="button" class="share-btn">Compartir Estadisticas</button>
+            </section>
+
+            <section class="kpi-grid">
+                <article class="kpi-card">
+                    <small>Puntos Totales</small>
+                    <strong>@Model.StockDisponible</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Retos Completed</small>
+                    <strong>@Model.TotalProductos</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Reduccion de CO2</small>
+                    <strong>@Model.TotalCategorias.2 kg</strong>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="left-column">
+                    <article class="panel-card progress-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Progreso de Eco Warrior</h2>
+                                <p>Nivel 5 - 250 pts para el siguiente rango</p>
                             </div>
+                            <span class="status-chip">Activo</span>
                         </div>
-                    </div>
+                        <div class="progress-row">
+                            <span>Progreso General</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="meter">
+                            <span style="width:75%"></span>
+                        </div>
+                    </article>
+
+                    <article class="panel-card map-card">
+                        <div class="card-head">
+                            <h3>Encuentros activos cerca de ti</h3>
+                            <a href="#">Ver Lista</a>
+                        </div>
+                        <div class="map-box">Mapa</div>
+                        <div class="map-footer">
+                            <div>
+                                <strong>Zona de Miraflores</strong>
+                                <small>3 eventos activos hoy</small>
+                            </div>
+                            <button type="button">Unirse</button>
+                        </div>
+                    </article>
                 </div>
-            }
-        </div>
+
+                <div class="right-column">
+                    <article class="challenge-card">
+                        <span class="timer">Termina en 4h</span>
+                        <h3>Almuerzo Residuo Cero</h3>
+                        <p>Trae tus recipientes reutilizables hoy y gana 50 pts.</p>
+                        <button type="button">Aceptar Reto</button>
+                    </article>
+
+                    <article class="panel-card leaderboard-card">
+                        <h3>Lideres</h3>
+                        <ul>
+                            <li><span>1</span><strong>Andrea Valera</strong><em>2,840</em></li>
+                            <li><span>2</span><strong>Carlos Ruiz</strong><em>2,510</em></li>
+                            <li><span>3</span><strong>Luis Perez</strong><em>2,100</em></li>
+                        </ul>
+                        <a class="ranking-btn" href="#">Ranking Completo</a>
+                    </article>
+                </div>
+            </section>
+        </main>
     </div>
 </section>
