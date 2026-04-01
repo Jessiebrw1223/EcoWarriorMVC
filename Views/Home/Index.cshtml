@@ -10,12 +10,11 @@
             <div class="brand-mark">EcoWarrior</div>
             <nav class="side-nav">
                 <a class="side-link active" href="#">Panel</a>
-                <a class="side-link" href="#">Retos</a>
-                <a class="side-link" href="#">Clasificacion</a>
-                <a class="side-link" href="#">Comunidad</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
             </nav>
         </div>
-        <a class="new-challenge-btn" asp-controller="Productos" asp-action="Index">+ Nuevo Reto</a>
     </aside>
 
     <div class="dashboard-main">
@@ -108,7 +107,7 @@
                             <li><span>2</span><strong>Carlos Ruiz</strong><em>2,510</em></li>
                             <li><span>3</span><strong>Luis Perez</strong><em>2,100</em></li>
                         </ul>
-                        <a class="ranking-btn" href="#">Ranking Completo</a>
+                        <a class="ranking-btn" asp-controller="Home" asp-action="Ranking">Ranking Completo</a>
                     </article>
                 </div>
             </section>

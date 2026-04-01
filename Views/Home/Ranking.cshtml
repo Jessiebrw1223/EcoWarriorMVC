@@ -1,0 +1,112 @@
+@{
+    ViewData["Title"] = "Ranking";
+    ViewData["IsDashboard"] = true;
+}
+
+<section class="dashboard-shell ranking-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Clasificacion</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>1,250 pts</strong>
+                </div>
+                <div>
+                    <strong>Mateo Silva</strong>
+                    <small>@@mateo_eco</small>
+                </div>
+                <div class="avatar-pill">MS</div>
+            </div>
+        </header>
+
+        <main class="retos-content ranking-content">
+            <section class="ranking-intro">
+                <h2>Tabla de Posiciones Mensual</h2>
+                <p>Reconociendo a los guerreros ecologicos mas dedicados de Lima. Completa retos y sube en el ranking para ganar recompensas exclusivas.</p>
+            </section>
+
+            <section class="ranking-table-card">
+                <div class="ranking-table-head">
+                    <span>Rango</span>
+                    <span>Nombre de usuario</span>
+                    <span>Nivel</span>
+                    <span>Puntos</span>
+                </div>
+
+                <div class="ranking-row">
+                    <span class="ranking-rank first">1</span>
+                    <div class="ranking-user-name">
+                        <span class="ranking-user-avatar">E</span>
+                        <strong>Elena S.</strong>
+                    </div>
+                    <span class="ranking-level danger">Nivel 42</span>
+                    <strong class="ranking-points">15,420</strong>
+                </div>
+
+                <div class="ranking-row">
+                    <span class="ranking-rank">2</span>
+                    <div class="ranking-user-name">
+                        <span class="ranking-user-avatar">M</span>
+                        <strong>Mateo Vargas</strong>
+                    </div>
+                    <span class="ranking-level danger">Nivel 38</span>
+                    <strong class="ranking-points">12,890</strong>
+                </div>
+
+                <div class="ranking-row highlight">
+                    <span class="ranking-rank">3</span>
+                    <div class="ranking-user-name">
+                        <span class="ranking-user-avatar me">Tu</span>
+                        <div>
+                            <strong>Tu (Eco Warrior)</strong>
+                            <small>SUBIENDO</small>
+                        </div>
+                    </div>
+                    <span class="ranking-level success">Nivel 35</span>
+                    <strong class="ranking-points">11,250</strong>
+                </div>
+
+                <div class="ranking-row">
+                    <span class="ranking-rank">4</span>
+                    <div class="ranking-user-name">
+                        <span class="ranking-user-avatar">L</span>
+                        <strong>Lucia Pezo</strong>
+                    </div>
+                    <span class="ranking-level success">Nivel 34</span>
+                    <strong class="ranking-points">10,110</strong>
+                </div>
+
+                <div class="ranking-row">
+                    <span class="ranking-rank">5</span>
+                    <div class="ranking-user-name">
+                        <span class="ranking-user-avatar">C</span>
+                        <strong>Carlos D.</strong>
+                    </div>
+                    <span class="ranking-level success">Nivel 31</span>
+                    <strong class="ranking-points">9,450</strong>
+                </div>
+            </section>
+
+            <section class="ranking-cta">
+                <div>
+                    <h3>Quieres subir en el ranking?</h3>
+                    <p>Completa el reto <strong>Limpieza de Playa Chorrillos</strong> para ganar +500 pts.</p>
+                </div>
+                <a href="#">Unirse al Reto</a>
+            </section>
+        </main>
+    </div>
+</section>

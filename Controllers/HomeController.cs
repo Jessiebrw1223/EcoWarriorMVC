@@ -23,6 +23,9 @@ public class HomeController(IProductoService productoService) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public IActionResult Registro() => View();
+
     public IActionResult Index()
     {
         var productos = productoService.ObtenerTodos();
@@ -36,6 +39,15 @@ public class HomeController(IProductoService productoService) : Controller
 
         return View(model);
     }
+
+    [HttpGet]
+    public IActionResult Retos() => View();
+
+    [HttpGet]
+    public IActionResult Ranking() => View();
+
+    [HttpGet]
+    public IActionResult Perfil() => View();
 
     public IActionResult Nosotros() => View();
 
