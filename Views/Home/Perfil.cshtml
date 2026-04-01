@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Perfil";
+    ViewData["IsDashboard"] = true;
+}
+
+<link rel="stylesheet" href="~/css/perfil.css" />
+
+<section class="dashboard-shell profile-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Mi Perfil</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>1,250 pts</strong>
+                </div>
+                <div>
+                    <strong>Alejandro Paz</strong>
+                    <small>@@alejandro_eco</small>
+                </div>
+                <div class="avatar-pill">AP</div>
+            </div>
+        </header>
+
+        <main class="retos-content profile-content">
+            <!-- Profile Section -->
+            <section class="profile-preview">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar large">AP</div>
+                        <div class="profile-info">
+                            <h1 class="profile-name">Alejandro Paz</h1>
+                            <p class="profile-title">ECO WARRIOR</p>
+                            <p class="profile-location">📍 Miraflores, Lima</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-secondary" style="margin-top: 16px; width: 100%;">Editar Perfil</button>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <strong>1,250</strong>
+                        <span>Puntos Totales</span>
+                    </div>
+                    <div class="stat-box">
+                        <strong>35</strong>
+                        <span>Nivel</span>
+                    </div>
+                    <div class="stat-box">
+                        <strong>3</strong>
+                        <span>Insignias</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Badges Section -->
+            <section class="profile-section">
+                <h2>Mis Insignias</h2>
+                <div class="badges-grid">
+                    <div class="badge-card">
+                        <div class="badge-icon">🌱</div>
+                        <h3>Seed Sower</h3>
+                        <p>12 árboles plantados</p>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">♻️</div>
+                        <h3>Plastic Hero</h3>
+                        <p>50kg reciclados</p>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">🚴</div>
+                        <h3>Bike Enthusiast</h3>
+                        <p>200km sin CO2</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Impact Level Section -->
+            <section class="profile-section">
+                <h2>Nivel de Impacto</h2>
+                <div class="impact-list">
+                    <div class="impact-item">
+                        <div class="impact-header">
+                            <span class="impact-icon">🌳</span>
+                            <span class="impact-name">Reforestación Urbana</span>
+                            <span class="impact-percent">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="impact-item">
+                        <div class="impact-header">
+                            <span class="impact-icon">🗑️</span>
+                            <span class="impact-name">Gestión de Residuos</span>
+                            <span class="impact-percent">42%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 42%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="impact-item">
+                        <div class="impact-header">
+                            <span class="impact-icon">⚡</span>
+                            <span class="impact-name">Ahorro Energético</span>
+                            <span class="impact-percent">68%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 68%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Section -->
+            <section class="profile-section">
+                <h2>Actividad Reciente</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon success">✓</div>
+                        <div class="activity-content">
+                            <strong>Reto Limpieza completado</strong>
+                            <p>Playa Carpayo - Completado hace 2 días</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon success">✓</div>
+                        <div class="activity-content">
+                            <strong>Nueva Insignia</strong>
+                            <p>Bike Enthusiast - Completado hace 5 días</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Next Goal Section -->
+            <section class="profile-section next-goal">
+                <div class="goal-card">
+                    <h3>Siguiente Meta</h3>
+                    <h2>Guardián de los Pantanos</h2>
+                    <p>Visita los Pantanos de Villa y participa en actividades de conservación.</p>
+                    <div class="goal-progress">
+                        <div class="goal-progress-bar">
+                            <div class="goal-progress-fill" style="width: 25%;"></div>
+                        </div>
+                        <span>25% completado</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</section>

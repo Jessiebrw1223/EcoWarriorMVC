@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Registro";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EcoWarrior MVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="login-body">
+    <section class="login-screen">
+        <div class="login-card">
+            <div class="login-logo" aria-hidden="true"></div>
+
+            <h1>&Uacute;nete a EcoWarrior</h1>
+            <p class="login-subtitle">Comienza tu viaje como Eco Warrior</p>
+
+            <form class="login-form" asp-controller="Home" asp-action="Index" method="get" novalidate>
+                <div class="login-field-group">
+                    <label class="login-label" for="nombreCompleto">Nombre completo</label>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">&#128100;</span>
+                        <input id="nombreCompleto" name="nombreCompleto" type="text" class="login-input" placeholder="Tu nombre y apellido" />
+                    </div>
+                </div>
+
+                <div class="login-field-group">
+                    <label class="login-label" for="correoRegistro">Correo electronico</label>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">&#9993;</span>
+                        <input id="correoRegistro" name="correoRegistro" type="email" class="login-input" placeholder="eco@ejemplo.com" />
+                    </div>
+                </div>
+
+                <div class="login-field-group">
+                    <label class="login-label" for="contrasenaRegistro">Contrasena</label>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">&#128274;</span>
+                        <input id="contrasenaRegistro" name="contrasenaRegistro" type="password" class="login-input" placeholder="********" />
+                    </div>
+                </div>
+
+                <div class="login-field-group">
+                    <label class="login-label" for="confirmarContrasena">Confirmar contrasena</label>
+                    <div class="login-input-wrap">
+                        <span class="login-input-icon">&#128737;</span>
+                        <input id="confirmarContrasena" name="confirmarContrasena" type="password" class="login-input" placeholder="********" />
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button">Crear Cuenta <span aria-hidden="true">&rarr;</span></button>
+            </form>
+
+            <p class="login-register">Ya tienes una cuenta? <a asp-controller="Home" asp-action="Login">Inicia sesi&oacute;n aqui</a></p>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Retos";
+    ViewData["IsDashboard"] = true;
+}
+
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Retos</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>1,250 pts</strong>
+                </div>
+                <div>
+                    <strong>Mateo Silva</strong>
+                    <small>@@mateo_eco</small>
+                </div>
+                <div class="avatar-pill">MS</div>
+            </div>
+        </header>
+
+        <main class="retos-content">
+            <section class="retos-hero">
+                <div>
+                    <h2>Desafios de la Semana</h2>
+                    <p>
+                        Unete a la comunidad de Lima y transforma nuestra ciudad un paso
+                        a la vez. Gana puntos y desbloquea insignias exclusivas.
+                    </p>
+                </div>
+                <div class="retos-hero-badge" aria-hidden="true"></div>
+            </section>
+
+            <section class="retos-grid">
+                <article class="reto-card">
+                    <span class="reto-level easy">Easy</span>
+                    <h3>Reciclar plastico</h3>
+                    <p>Recolecta y separa botellas PET en los puntos de acopio autorizados.</p>
+                    <div class="reto-meta">
+                        <span>428 participantes</span>
+                        <strong>85%</strong>
+                    </div>
+                    <div class="reto-progress"><span style="width:85%"></span></div>
+                    <div class="reto-footer">
+                        <em>+ 50 pts</em>
+                        <button type="button">Completar</button>
+                    </div>
+                </article>
+
+                <article class="reto-card">
+                    <span class="reto-level medium">Medium</span>
+                    <h3>Usar bicicleta</h3>
+                    <p>Sustituye el auto por la bicicleta para un trayecto de al menos 5 km hoy.</p>
+                    <div class="reto-meta">
+                        <span>166 eco-ciclistas</span>
+                        <strong>60%</strong>
+                    </div>
+                    <div class="reto-progress"><span style="width:60%"></span></div>
+                    <div class="reto-footer">
+                        <em>+ 150 pts</em>
+                        <button type="button">Completar</button>
+                    </div>
+                </article>
+
+                <article class="reto-card reto-card-dark">
+                    <span class="reto-level hard">Hard</span>
+                    <h3>Plantar un arbol</h3>
+                    <p>Participa en nuestra jornada de reforestacion en las Lomas de Villa Maria del Triunfo.</p>
+                    <div class="reto-meta">
+                        <span>Evento Sabado</span>
+                        <strong>12/50 Cupos</strong>
+                    </div>
+                    <div class="reto-progress"><span style="width:24%"></span></div>
+                    <div class="reto-footer">
+                        <em>+ 500 pts</em>
+                        <button type="button">Inscribirse</button>
+                    </div>
+                </article>
+
+                <article class="reto-card">
+                    <span class="reto-level medium">Medium</span>
+                    <h3>Limpieza Publica</h3>
+                    <p>Dedica 15 minutos a limpiar un espacio publico o parque cercano a tu hogar.</p>
+                    <div class="reto-meta">
+                        <span>312 m2 recuperados</span>
+                        <strong>45%</strong>
+                    </div>
+                    <div class="reto-progress"><span style="width:45%"></span></div>
+                    <div class="reto-footer">
+                        <em>+ 100 pts</em>
+                        <button type="button">Completar</button>
+                    </div>
+                </article>
+
+                <article class="reto-card reto-card-locked">
+                    <div class="lock-icon">&#128274;</div>
+                    <h3>Mas desafios pronto</h3>
+                    <p>Sigue participando para desbloquear retos de temporada.</p>
+                </article>
+            </section>
+        </main>
+    </div>
+</section>
