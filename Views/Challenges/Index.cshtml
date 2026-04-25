@@ -1,0 +1,46 @@
+@model IEnumerable<Challenge>
+@{ ViewData["Title"] = "Retos"; }
+<div class="page-title">
+    <div>
+        <div class="page-kicker">Desafíos EcoWarrior</div>
+        <h1>Retos</h1>
+        <p>Elige una misión sostenible, gana puntos y sube de nivel.</p>
+    </div>
+    <a class="btn btn-success" href="/AiAgent">Recomendarme un reto</a>
+</div>
+<section class="mission-strip mb-3">
+    <h2>Desafíos de la Semana</h2>
+    <p>Una selección de acciones ecológicas para mejorar tu ciudad y competir con impacto real.</p>
+</section>
+<div class="filter-bar">
+    <a class="btn btn-outline-success" href="/Challenges">Todos</a>
+    <a class="btn btn-outline-success" href="/Challenges?difficulty=Fácil">Fácil</a>
+    <a class="btn btn-outline-success" href="/Challenges?difficulty=Medio">Medio</a>
+    <a class="btn btn-outline-success" href="/Challenges?difficulty=Difícil">Difícil</a>
+    <a class="btn btn-outline-success" href="/Challenges">Populares</a>
+</div>
+@if (!Model.Any())
+{
+    <div class="empty-state">Aún no hay retos cargados. Cuando la base de datos esté sembrada, aparecerán aquí.</div>
+}
+else
+{
+<div class="cards-grid">
+@foreach (var item in Model)
+{
+    var icon = item.Category.Contains("Agua") ? "💧" : item.Category.Contains("Transporte") ? "🚲" : item.Category.Contains("Energ") ? "⚡" : item.Category.Contains("Comunidad") ? "🤝" : "♻️";
+    var dark = item.Difficulty == "Difícil" ? " badge-dark" : "";
+    <div class="challenge-card @(item.Difficulty == "Difícil" ? "challenge-dark" : "")">
+        <div class="challenge-icon">@icon</div>
+        <span class="badge-soft@dark">@item.Difficulty</span>
+        <h3>@item.Name</h3>
+        <p>@item.Description</p>
+        <div class="meta"><span>@item.EstimatedMinutes min</span><span>@item.Participants usuarios</span><span>@item.Category</span></div>
+        <p class="impact">@item.EcoImpact</p>
+        <form method="post" action="/Challenges/Start/@item.Id">
+            <button class="btn btn-success w-100">Iniciar reto · +@item.Points pts</button>
+        </form>
+    </div>
+}
+</div>
+}

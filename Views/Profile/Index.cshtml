@@ -1,0 +1,51 @@
+@model AppUser
+@{ ViewData["Title"] = "Perfil"; }
+@if (Model == null)
+{
+    <div class="empty-state">Inicia sesión para ver tu perfil EcoWarrior.</div>
+}
+else
+{
+<section class="profile-header">
+    <div class="avatar">@Model.FullName.Substring(0,1)</div>
+    <div>
+        <div class="page-kicker">Mi perfil</div>
+        <h1>@Model.FullName</h1>
+        <p class="screen-subtitle">Nivel @Model.Level · @Model.Points puntos · @Model.District</p>
+    </div>
+    <button class="btn btn-success">Compartir logros</button>
+</section>
+<div class="profile-grid">
+    <section>
+        <div class="achievement-row">
+            <div class="mini-achievement"><span>🌿</span><b>Eco Starter</b><small class="text-muted">Desbloqueada</small></div>
+            <div class="mini-achievement"><span>♻️</span><b>Reciclador</b><small class="text-muted">Nivel 2</small></div>
+            <div class="mini-achievement"><span>🏅</span><b>Top Activo</b><small class="text-muted">En progreso</small></div>
+        </div>
+        <div class="card-premium mt-3">
+            <h2>Nivel de impacto</h2>
+            <p class="screen-subtitle">Tu progreso mide constancia, retos completados y aporte ambiental.</p>
+            <div class="progress-track mt-3"><div class="progress-fill" style="width:74%"></div></div>
+        </div>
+        <div class="card-premium mt-3">
+            <h2>Actividad reciente</h2>
+            <div class="kpi-list">
+                <div class="kpi-line"><span>Reto completado</span><strong>Reciclaje urbano</strong></div>
+                <div class="kpi-line"><span>Insignia próxima</span><strong>Guardían Verde</strong></div>
+                <div class="kpi-line"><span>Racha</span><strong>@Model.DailyStreak días</strong></div>
+            </div>
+        </div>
+    </section>
+    <aside class="side-widget">
+        <div class="level-card">
+            <span class="badge-soft">Mis puntos</span>
+            <div class="level-circle"><span>@Model.Points</span></div>
+            <b>Impacto acumulado</b>
+        </div>
+        <div class="card-premium">
+            <h2>Certificados</h2>
+            <p class="screen-subtitle">Comparte tus logros cuando desbloquees nuevas insignias.</p>
+        </div>
+    </aside>
+</div>
+}

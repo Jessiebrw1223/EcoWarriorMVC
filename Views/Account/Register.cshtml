@@ -1,0 +1,18 @@
+@model RegisterViewModel
+@{ ViewData["Title"] = "Registro"; }
+<div class="auth-page">
+<div class="auth-card compact">
+    <span class="badge-soft">+ Únete</span>
+    <h1>Únete a EcoWarrior</h1>
+    <p>Empieza hoy a cambiar tu ciudad con retos sostenibles.</p>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+        <label>Nombre completo</label><input asp-for="FullName" class="form-control" />
+        <label class="mt-3">Correo</label><input asp-for="Email" class="form-control" />
+        <label class="mt-3">Distrito / Zona</label><input asp-for="District" class="form-control" />
+        <label class="mt-3">Contraseña</label><input asp-for="Password" class="form-control" />
+        <button class="btn btn-success w-100 mt-4">Crear mi cuenta</button>
+        <div class="text-center mt-3"><a class="micro-link" href="/Account/Login">Ya tengo una cuenta</a></div>
+    </form>
+</div>
+</div>

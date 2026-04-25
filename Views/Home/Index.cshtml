@@ -1,0 +1,59 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Panel"; }
+<div class="page-title">
+    <div>
+        <div class="page-kicker">EcoWarrior</div>
+        <h1>Hola, @(Model.User?.FullName?.Split(' ')[0] ?? "EcoWarrior") 👋</h1>
+        <p>Tu ciudad necesita acciones reales. Hoy puedes marcar diferencia.</p>
+    </div>
+    <a href="/Challenges" class="btn btn-success">+ Nuevo reto</a>
+</div>
+<div class="panel-grid">
+    <section class="dashboard-main">
+        <div class="mission-strip">
+            <h2>¿Listo para tu siguiente misión?</h2>
+            <p>Completa el reto recomendado y suma puntos para mantener tu racha activa.</p>
+            <div class="mission-action">
+                <a class="btn btn-light" href="/Challenges">Ver desafíos</a>
+                <a class="btn btn-dark" href="/AiAgent">Pedir recomendación</a>
+            </div>
+        </div>
+        <div class="stats-mini">
+            <div class="stat-card"><span>Puntos actuales</span><strong>@(Model.User?.Points ?? 1250)</strong><small>+150 esta semana</small></div>
+            <div class="stat-card"><span>Retos completados</span><strong>@(Model.CompletedChallenges == 0 ? 12 : Model.CompletedChallenges)</strong><small>Constancia activa</small></div>
+            <div class="stat-card"><span>Ranking</span><strong>@(Model.CurrentRank == 0 ? "#8" : $"#{Model.CurrentRank}")</strong><small>Sube 2 puestos</small></div>
+        </div>
+        <article class="task-card">
+            <div class="task-head">
+                <h3>Progreso hacia tu recompensa</h3>
+                <span class="badge-soft">Nivel @(Model.User?.Level ?? 4)</span>
+            </div>
+            <p>Te falta poco para desbloquear la insignia “Guardían Verde”.</p>
+            <div class="progress-track"><div class="progress-fill"></div></div>
+        </article>
+        <article class="task-card">
+            <div class="task-head">
+                <h3>@(Model.RecommendedChallenge?.Name ?? "Recicla 5 botellas")</h3>
+                <span class="badge-soft">+@(Model.RecommendedChallenge?.Points ?? 150) pts</span>
+            </div>
+            <p>@(Model.RecommendedChallenge?.Description ?? "Reto rápido para completar hoy desde casa o cerca de tu zona.")</p>
+            <a href="/Challenges" class="micro-link">Iniciar reto recomendado →</a>
+        </article>
+    </section>
+    <aside class="side-widget">
+        <div class="level-card">
+            <span class="badge-soft">Mi nivel</span>
+            <div class="level-circle"><span>@(Model.User?.Level ?? 4)</span></div>
+            <b>Eco Héroe activo</b>
+            <p class="screen-subtitle">Mantén la racha y sube al Top 5.</p>
+        </div>
+        <div class="card-premium">
+            <h2>Resumen semanal</h2>
+            <div class="kpi-list">
+                <div class="kpi-line"><span>Racha diaria</span><strong>@(Model.User?.DailyStreak ?? 7) días</strong></div>
+                <div class="kpi-line"><span>Impacto estimado</span><strong>Alto</strong></div>
+                <div class="kpi-line"><span>Siguiente meta</span><strong>1 reto hoy</strong></div>
+            </div>
+        </div>
+    </aside>
+</div>

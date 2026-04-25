@@ -1,0 +1,16 @@
+@model AiQuestionViewModel
+@{ ViewData["Title"] = "EcoGuide AI"; }
+<div class="auth-card wide">
+    <span class="badge-soft">✦ Asistente ecológico</span>
+    <h1>EcoGuide AI</h1>
+    <p>Pregunta qué reto completar, cómo subir de nivel o cómo mejorar tu impacto. Esta vista queda lista para Semantic Kernel / LLM.</p>
+    <form method="post" action="/AiAgent/Ask">
+        <label>Tu pregunta</label>
+        <textarea asp-for="Question" class="form-control" rows="4" placeholder="¿Qué reto me recomiendas hoy?"></textarea>
+        <button class="btn btn-success mt-3">Preguntar</button>
+    </form>
+    @if (!string.IsNullOrWhiteSpace(Model.Answer))
+    {
+        <div class="ai-answer">@Model.Answer</div>
+    }
+</div>

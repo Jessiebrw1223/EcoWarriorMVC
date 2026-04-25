@@ -1,0 +1,16 @@
+@model ContactMessage
+@{ ViewData["Title"] = "Contacto"; }
+<div class="auth-page">
+<div class="auth-card">
+    <span class="badge-soft">✉ Contacto</span>
+    <h1>Contacto</h1>
+    <p>Cuéntanos cómo podemos ayudarte o qué alianza sostenible quieres proponer.</p>
+    @if (ViewBag.Success != null) { <div class="alert alert-success">@ViewBag.Success</div> }
+    <form method="post">
+        <label>Nombre</label><input asp-for="Name" class="form-control" />
+        <label class="mt-3">Correo</label><input asp-for="Email" class="form-control" />
+        <label class="mt-3">Mensaje</label><textarea asp-for="Message" class="form-control" rows="5"></textarea>
+        <button class="btn btn-success w-100 mt-4">Enviar mensaje</button>
+    </form>
+</div>
+</div>

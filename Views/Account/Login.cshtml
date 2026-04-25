@@ -1,0 +1,16 @@
+@model LoginViewModel
+@{ ViewData["Title"] = "Login"; }
+<div class="auth-page">
+<div class="auth-card compact">
+    <span class="badge-soft">🌱 EcoWarrior</span>
+    <h1>Bienvenido de nuevo, EcoWarrior</h1>
+    <p>Continúa tu progreso y ayuda a tu ciudad con acciones reales.</p>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+        <label>Correo</label><input asp-for="Email" class="form-control" placeholder="eco@correo.com" />
+        <label class="mt-3">Contraseña</label><input asp-for="Password" class="form-control" placeholder="••••••••" />
+        <button class="btn btn-success w-100 mt-4">Iniciar sesión</button>
+        <div class="text-center mt-3"><a class="micro-link" href="/Account/Register">Crear mi cuenta EcoWarrior</a></div>
+    </form>
+</div>
+</div>

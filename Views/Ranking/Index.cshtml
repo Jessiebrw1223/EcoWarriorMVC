@@ -1,0 +1,43 @@
+@model IEnumerable<AppUser>
+@{ ViewData["Title"] = "Clasificación"; var list = Model.ToList(); }
+<div class="page-title">
+    <div>
+        <div class="page-kicker">Ranking EcoWarrior</div>
+        <h1>Clasificación</h1>
+        <p>Compite con impacto real. Te faltan pocos puntos para subir de posición.</p>
+    </div>
+    <span class="badge-soft">Semanal · Mensual · Global</span>
+</div>
+@if (!list.Any())
+{
+    <div class="empty-state">Aún no hay usuarios en la clasificación.</div>
+}
+else
+{
+<div class="podium mb-3">
+@for (int i = 0; i < Math.Min(3, list.Count); i++)
+{
+    <div class="podium-card @(i == 0 ? "first" : "")">
+        <div class="medal">@(i == 0 ? "🥇" : i == 1 ? "🥈" : "🥉")</div>
+        <strong>@list[i].FullName</strong>
+        <span class="screen-subtitle">@list[i].Points pts</span>
+    </div>
+}
+</div>
+<div class="table-wrap">
+<table class="table table-hover align-middle">
+<thead><tr><th>#</th><th>Usuario</th><th>Distrito</th><th>Estado</th><th>Puntos</th></tr></thead>
+<tbody>
+@for (int i = 0; i < list.Count; i++)
+{
+<tr><td><span class="rank-tag">#@(i+1)</span></td><td><strong>@list[i].FullName</strong></td><td>@list[i].District</td><td><span class="badge-soft">Activo</span></td><td><strong>@list[i].Points</strong></td></tr>
+}
+</tbody>
+</table>
+</div>
+<section class="mission-strip mt-3">
+    <h2>¿Quieres subir en el ranking?</h2>
+    <p>Completa un reto recomendado hoy y aumenta tu distancia frente a otros EcoWarriors.</p>
+    <div class="mission-action"><a href="/Challenges" class="btn btn-light">Buscar reto</a></div>
+</section>
+}
