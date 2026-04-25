@@ -13,6 +13,10 @@
                 <a class="side-link active" asp-controller="Home" asp-action="Ranking">Ranking</a>
                 <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
             </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
         </div>
     </aside>
 
@@ -25,10 +29,10 @@
                     <strong>1,250 pts</strong>
                 </div>
                 <div>
-                    <strong>Mateo Silva</strong>
-                    <small>@@mateo_eco</small>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
                 </div>
-                <div class="avatar-pill">MS</div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
             </div>
         </header>
 

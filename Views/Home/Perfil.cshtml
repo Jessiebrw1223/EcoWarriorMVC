@@ -15,6 +15,10 @@
                 <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
                 <a class="side-link active" asp-controller="Home" asp-action="Perfil">Perfil</a>
             </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
         </div>
     </aside>
 
@@ -27,10 +31,10 @@
                     <strong>1,250 pts</strong>
                 </div>
                 <div>
-                    <strong>Alejandro Paz</strong>
-                    <small>@@alejandro_eco</small>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
                 </div>
-                <div class="avatar-pill">AP</div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
             </div>
         </header>
 
@@ -39,9 +43,9 @@
             <section class="profile-preview">
                 <div class="profile-card">
                     <div class="profile-header">
-                        <div class="profile-avatar large">AP</div>
+                        <div class="profile-avatar large">@ViewData["InicialesUsuario"]</div>
                         <div class="profile-info">
-                            <h1 class="profile-name">Alejandro Paz</h1>
+                            <h1 class="profile-name">@ViewData["NombreUsuario"]</h1>
                             <p class="profile-title">ECO WARRIOR</p>
                             <p class="profile-location">📍 Miraflores, Lima</p>
                         </div>
