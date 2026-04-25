@@ -1,3 +1,4 @@
+@model RegistroViewModel
 @{
     ViewData["Title"] = "Registro";
     Layout = null;
@@ -20,37 +21,44 @@
             <h1>&Uacute;nete a EcoWarrior</h1>
             <p class="login-subtitle">Comienza tu viaje como Eco Warrior</p>
 
-            <form class="login-form" asp-controller="Home" asp-action="Index" method="get" novalidate>
+            <form class="login-form" asp-controller="Home" asp-action="Registro" method="post" novalidate>
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
                 <div class="login-field-group">
-                    <label class="login-label" for="nombreCompleto">Nombre completo</label>
+                    <label class="login-label" asp-for="Nombre">Nombre completo</label>
                     <div class="login-input-wrap">
                         <span class="login-input-icon">&#128100;</span>
-                        <input id="nombreCompleto" name="nombreCompleto" type="text" class="login-input" placeholder="Tu nombre y apellido" />
+                        <input asp-for="Nombre" class="login-input" placeholder="Tu nombre y apellido" />
                     </div>
+                    <span asp-validation-for="Nombre" class="text-danger small"></span>
                 </div>
 
                 <div class="login-field-group">
-                    <label class="login-label" for="correoRegistro">Correo electronico</label>
+                    <label class="login-label" asp-for="Correo">Correo electronico</label>
                     <div class="login-input-wrap">
                         <span class="login-input-icon">&#9993;</span>
-                        <input id="correoRegistro" name="correoRegistro" type="email" class="login-input" placeholder="eco@ejemplo.com" />
+                        <input asp-for="Correo" class="login-input" placeholder="eco@ejemplo.com" />
                     </div>
+                    <span asp-validation-for="Correo" class="text-danger small"></span>
                 </div>
 
                 <div class="login-field-group">
-                    <label class="login-label" for="contrasenaRegistro">Contrasena</label>
+                    <label class="login-label" asp-for="Contrasena">Contrasena</label>
                     <div class="login-input-wrap">
                         <span class="login-input-icon">&#128274;</span>
-                        <input id="contrasenaRegistro" name="contrasenaRegistro" type="password" class="login-input" placeholder="********" />
+                        <input asp-for="Contrasena" class="login-input" placeholder="********" />
                     </div>
+                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
                 </div>
 
                 <div class="login-field-group">
-                    <label class="login-label" for="confirmarContrasena">Confirmar contrasena</label>
+                    <label class="login-label" asp-for="ConfirmarContrasena">Confirmar contrasena</label>
                     <div class="login-input-wrap">
                         <span class="login-input-icon">&#128737;</span>
-                        <input id="confirmarContrasena" name="confirmarContrasena" type="password" class="login-input" placeholder="********" />
+                        <input asp-for="ConfirmarContrasena" class="login-input" placeholder="********" />
                     </div>
+                    <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
                 </div>
 
                 <button type="submit" class="login-button">Crear Cuenta <span aria-hidden="true">&rarr;</span></button>
@@ -59,5 +67,9 @@
             <p class="login-register">Ya tienes una cuenta? <a asp-controller="Home" asp-action="Login">Inicia sesi&oacute;n aqui</a></p>
         </div>
     </section>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

@@ -86,6 +86,24 @@ body {
   filter: brightness(1.04);
 }
 
+.logout-form {
+  margin-top: 0.85rem;
+}
+
+.logout-btn {
+  width: 100%;
+  border: 1px solid #d8dfdc;
+  background: #ffffff;
+  color: #2d3a35;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+}
+
+.logout-btn:hover {
+  background: #f0f5f2;
+}
+
 .dashboard-main {
   display: flex;
   flex-direction: column;
