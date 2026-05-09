@@ -4,7 +4,7 @@ using EcoWarriorMVC.Models;
 
 namespace EcoWarriorMVC.Services;
 
-public class WeatherService(HttpClient httpClient) : IWeatherService
+public class WeatherService(HttpClient httpClient, IEcoRecommendationService ecoRecommendationService) : IWeatherService
 {
     private const string PaisObjetivo = "Peru";
 
@@ -45,6 +45,16 @@ public class WeatherService(HttpClient httpClient) : IWeatherService
             return null;
         }
 
+        var climaActual = new CurrentWeatherResponse
+        {
+            Temperatura = current.Temperature2m,
+            SensacionTermica = current.ApparentTemperature,
+            Humedad = current.RelativeHumidity2m,
+            VelocidadViento = current.WindSpeed10m,
+            CodigoClima = current.WeatherCode,
+            EstadoClima = ObtenerDescripcionClima(current.WeatherCode)
+        };
+
         return new EcoWeatherResponse
         {
             Ciudad = location.Name,
@@ -52,16 +62,8 @@ public class WeatherService(HttpClient httpClient) : IWeatherService
             Longitud = location.Longitude,
             Pais = "Perú",
             NombreRegion = location.Admin1,
-            ClimaActual = new CurrentWeatherResponse
-            {
-                Temperatura = current.Temperature2m,
-                SensacionTermica = current.ApparentTemperature,
-                Humedad = current.RelativeHumidity2m,
-                VelocidadViento = current.WindSpeed10m,
-                CodigoClima = current.WeatherCode,
-                EstadoClima = ObtenerDescripcionClima(current.WeatherCode)
-            },
-            MensajeEco = ObtenerMensajeEco(current.WeatherCode, current.Temperature2m, current.WindSpeed10m)
+            ClimaActual = climaActual,
+            MensajeEco = ecoRecommendationService.ObtenerMensajeEco(climaActual)
         };
     }
 
@@ -83,26 +85,6 @@ public class WeatherService(HttpClient httpClient) : IWeatherService
         96 or 99 => "Tormenta con granizo",
         _ => "Condiciones variables"
     };
-
-    private static string ObtenerMensajeEco(int weatherCode, double temperatura, double viento)
-    {
-        if (weatherCode is 61 or 63 or 65 or 80 or 81 or 82)
-        {
-            return "Buen momento para priorizar actividades bajo techo y reducir desplazamientos innecesarios.";
-        }
-
-        if (weatherCode == 0 && temperatura >= 18 && temperatura <= 28)
-        {
-            return "Clima ideal para usar bicicleta, caminar o hacer actividades al aire libre.";
-        }
-
-        if (viento >= 30)
-        {
-            return "Hay bastante viento. Revisa ventanas y evita desperdicio de energía por ventilación excesiva.";
-        }
-
-        return "Clima estable. Aprovecha para planificar rutas sostenibles y ahorrar energía.";
-    }
 
     private sealed class OpenMeteoGeocodingResponse
     {
