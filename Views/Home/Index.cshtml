@@ -46,6 +46,58 @@
                 <button type="button" class="share-btn">Compartir Estadisticas</button>
             </section>
 
+            @if (Model.Clima?.ClimaActual is not null)
+            {
+                <article class="panel-card weather-card">
+                    <div class="weather-header">
+                        <div class="weather-location">
+                            <h3>🌍 @Model.Clima.Ciudad</h3>
+                            <p>@Model.Clima.Pais</p>
+                        </div>
+                        <div class="weather-status">
+                            <span class="status-chip">@Model.Clima.ClimaActual.EstadoClima</span>
+                        </div>
+                    </div>
+
+                    <div class="weather-body">
+                        <div class="temperature-display">
+                            <div class="main-temp">
+                                <span class="temp-value">@Model.Clima.ClimaActual.Temperatura.ToString("0")</span>
+                                <span class="temp-unit">°C</span>
+                            </div>
+                            <div class="temp-feel">
+                                Sensación térmica<br />
+                                <strong>@Model.Clima.ClimaActual.SensacionTermica.ToString("0")°C</strong>
+                            </div>
+                        </div>
+
+                        <div class="weather-metrics">
+                            <div class="metric">
+                                <span class="metric-label">💨 Viento</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.VelocidadViento.ToString("0") km/h</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">💧 Humedad</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.Humedad.ToString("0")%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weather-recommendation">
+                        <p>🌱 <strong>Recomendación eco:</strong> @Model.Clima.MensajeEco</p>
+                    </div>
+                </article>
+            }
+            else
+            {
+                <article class="panel-card weather-card weather-empty">
+                    <div style="text-align: center; padding: 2rem;">
+                        <p>📍 Agrega tu ciudad para ver el clima</p>
+                        <p style="font-size: 0.9rem; color: #666;">Intenta: <strong>/Home/Index?ciudad=Lima</strong></p>
+                    </div>
+                </article>
+            }
+
             <section class="kpi-grid">
                 <article class="kpi-card">
                     <small>Puntos Totales</small>

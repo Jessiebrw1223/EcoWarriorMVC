@@ -8,4 +8,5 @@ public class HomeViewModel
     public int TotalProductos { get; set; }
     public int TotalCategorias { get; set; }
     public int StockDisponible { get; set; }
+    public EcoWeatherResponse? Clima { get; set; }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace EcoWarriorMVC.Controllers;
 
-public class HomeController(IProductoService productoService, IHomeService homeService) : Controller
+public class HomeController(IProductoService productoService, IHomeService homeService, IWeatherService weatherService) : Controller
 {
     [HttpGet]
     public IActionResult Login() => View(new LoginViewModel());
@@ -74,17 +74,19 @@ public class HomeController(IProductoService productoService, IHomeService homeS
         return RedirectToAction(nameof(Login));
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index([FromQuery] string? ciudad = null)
     {
         ConfigurarDatosUsuarioEnVista();
 
         var productos = productoService.ObtenerTodos();
+        var clima = await weatherService.ObtenerClimaPorCiudadAsync(ciudad ?? "Lima");
         var model = new HomeViewModel
         {
             Destacados = productoService.ObtenerDestacados(),
             TotalProductos = productos.Count,
             TotalCategorias = productos.Select(x => x.Categoria).Distinct().Count(),
-            StockDisponible = productos.Sum(x => x.Stock)
+            StockDisponible = productos.Sum(x => x.Stock),
+            Clima = clima
         };
 
         return View(model);

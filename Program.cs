@@ -15,6 +15,8 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IBadgeService, BadgeService>();
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 var app = builder.Build();
 
