@@ -25,11 +25,7 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
 
@@ -40,6 +36,7 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
