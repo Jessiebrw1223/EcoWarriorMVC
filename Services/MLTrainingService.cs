@@ -3,39 +3,48 @@ using EcoWarriorMVC.Models;
 
 namespace EcoWarriorMVC.Services;
 
-public static class MLTrainingService
+public class MLTrainingService
 {
-    public static void TrainModel()
+    public static ITransformer TrainModel(MLContext mlContext)
     {
-        var mlContext = new MLContext();
-
         var dataPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
+            AppContext.BaseDirectory,
             "MLModels",
             "eco_data.csv");
 
+        if (!File.Exists(dataPath))
+        {
+            throw new FileNotFoundException(
+                $"No se encontró el dataset ML.NET en: {dataPath}");
+        }
+
         var data = mlContext.Data.LoadFromTextFile<EcoData>(
-            dataPath,
+            path: dataPath,
             hasHeader: true,
             separatorChar: ',');
 
         var pipeline =
-            mlContext.Transforms.Conversion.MapValueToKey("Label", nameof(EcoData.Recomendacion))
-            .Append(mlContext.Transforms.Concatenate(
-                "Features",
-                nameof(EcoData.Temperatura),
-                nameof(EcoData.Humedad),
-                nameof(EcoData.Viento)))
-            .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
-            .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+            mlContext.Transforms.Conversion.MapValueToKey(
+                outputColumnName: "Label",
+                inputColumnName: nameof(EcoData.Recommendation))
+
+            .Append(
+                mlContext.Transforms.Concatenate(
+                    "Features",
+                    nameof(EcoData.Temperature),
+                    nameof(EcoData.Humidity),
+                    nameof(EcoData.WindSpeed)))
+
+            .Append(
+                mlContext.MulticlassClassification.Trainers
+                    .SdcaMaximumEntropy())
+
+            .Append(
+                mlContext.Transforms.Conversion.MapKeyToValue(
+                    "PredictedLabel"));
 
         var model = pipeline.Fit(data);
 
-        var modelPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "MLModels",
-            "ecowarrior_model.zip");
-
-        mlContext.Model.Save(model, data.Schema, modelPath);
+        return model;
     }
 }

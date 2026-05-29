@@ -6,34 +6,55 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- PAQUETES -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0-preview.3.25171.6" />
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-preview.3.25171.6">
+    <PackageReference Include="Microsoft.EntityFrameworkCore"
+                      Version="10.0.0-preview.3.25171.6" />
+
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"
+                      Version="10.0.0-preview.3.25171.6">
       <PrivateAssets>all</PrivateAssets>
+
       <IncludeAssets>
         runtime; build; native; contentfiles; analyzers; buildtransitive
       </IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.ML" Version="4.0.0" />
+    <PackageReference Include="Microsoft.ML"
+                      Version="4.0.0" />
 
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-preview.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"
+                      Version="10.0.0-preview.3" />
 
-    <!-- Semantic Kernel + LLM -->
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.30.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.30.0" />
+    <!-- Semantic Kernel -->
+    <PackageReference Include="Microsoft.SemanticKernel"
+                      Version="1.30.0" />
 
-    <!-- Memory cache -->
+    <PackageReference Include="Microsoft.SemanticKernel.Agents.Core"
+                      Version="1.30.0" />
+
+    <!-- Cache -->
     <PackageReference Include="Microsoft.Extensions.Caching.Memory"
                       Version="10.0.0-preview.3.25171.6" />
+
   </ItemGroup>
 
-  <!-- COPIAR MODELOS ML.NET -->
+  <!-- COPIAR ARCHIVOS ML.NET -->
   <ItemGroup>
+
+    <!-- CSV -->
+    <Content Include="MLModels\**\*.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+
+    <!-- ZIP -->
     <Content Include="MLModels\**\*.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
+
   </ItemGroup>
 
 </Project>

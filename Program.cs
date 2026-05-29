@@ -1,59 +1,96 @@
 using EcoWarriorMVC.Data;
 using EcoWarriorMVC.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── MVC + JSON camelCase ──────────────────────────────────────────
+// ─────────────────────────────────────────────
+// MVC + JSON camelCase
+// ─────────────────────────────────────────────
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(o =>
         o.JsonSerializerOptions.PropertyNamingPolicy =
             System.Text.Json.JsonNamingPolicy.CamelCase);
 
-// ─── Base de datos PostgreSQL ──────────────────────────────────────
+// ─────────────────────────────────────────────
+// PostgreSQL
+// ─────────────────────────────────────────────
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ─── Sesiones ──────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Sesiones
+// ─────────────────────────────────────────────
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout        = TimeSpan.FromHours(8);
-    options.Cookie.HttpOnly    = true;
+    options.IdleTimeout = TimeSpan.FromHours(8);
+    options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
-// ─── Caché en memoria (WeatherService) ────────────────────────────
+// ─────────────────────────────────────────────
+// Cache
+// ─────────────────────────────────────────────
 builder.Services.AddMemoryCache();
 
-// ─── Servicios de negocio ──────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Servicios
+// ─────────────────────────────────────────────
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IBadgeService, BadgeService>();
 
-// ML.NET: Singleton (modelo entrena lazy una sola vez)
-builder.Services.AddSingleton<IEcoRecommendationService, EcoRecommendationService>();
+// ML.NET
+builder.Services.AddSingleton<IEcoRecommendationService,
+    EcoRecommendationService>();
 
-// HttpClient del Weather con timeout
+// Weather API
 builder.Services.AddHttpClient<IWeatherService, WeatherService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(
-        builder.Configuration.GetValue<int>("Weather:TimeoutSeconds", 10));
-    client.DefaultRequestHeaders.Add("User-Agent", "EcoWarriorMVC/1.0");
+        builder.Configuration.GetValue<int>(
+            "Weather:TimeoutSeconds",
+            10));
+
+    client.DefaultRequestHeaders.Add(
+        "User-Agent",
+        "EcoWarriorMVC/1.0");
 });
 
-// Agente IA Semantic Kernel (Scoped)
-builder.Services.AddScoped<IEcoAiAgentService, EcoAiAgentService>();
+// Semantic Kernel
+builder.Services.AddScoped<IEcoAiAgentService,
+    EcoAiAgentService>();
 
-// ─── Logging ──────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Logging
+// ─────────────────────────────────────────────
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+// ─────────────────────────────────────────────
+// ENTRENAR ML.NET
+// ─────────────────────────────────────────────
+var mlContext = new MLContext();
 
-MLTrainingService.TrainModel();
+try
+{
+    MLTrainingService.TrainModel(mlContext);
+
+    Console.WriteLine("✅ Modelo ML.NET entrenado correctamente.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(
+        $"❌ Error entrenando ML.NET: {ex.Message}");
+}
 
 var app = builder.Build();
 
-// ─── Middleware ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Middleware
+// ─────────────────────────────────────────────
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -61,21 +98,27 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseSession();
+
 app.UseAuthorization();
 
-// ─── Rutas ────────────────────────────────────────────────────────
-// API controllers primero
+// ─────────────────────────────────────────────
+// Endpoints
+// ─────────────────────────────────────────────
 app.MapControllers();
 
-// MVC default
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
 
-// ─── Seed BD ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Seed DB
+// ─────────────────────────────────────────────
 DbInitializer.EnsureSeeded(app.Services);
 
 app.Run();
