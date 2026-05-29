@@ -1,0 +1,264 @@
+@{
+    ViewData["Title"] = "Perfil";
+    ViewData["IsDashboard"] = true;
+    var correoUsuario = Context.Session.GetString("UsuarioCorreo") ?? "";
+}
+
+<section class="dashboard-shell profile-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Mi Perfil</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong id="header-puntos">… pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="retos-content profile-content">
+
+            <!-- Skeleton mientras carga -->
+            <div id="perfil-loading" style="text-align:center;padding:3rem;color:#aaa;">🌿 Cargando tu perfil...</div>
+
+            <div id="perfil-content" style="display:none;">
+
+                <!-- Tarjeta principal -->
+                <section class="profile-preview">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar large" id="p-iniciales">EW</div>
+                            <div class="profile-info">
+                                <h1 class="profile-name" id="p-nombre">–</h1>
+                                <p class="profile-title" id="p-nivel">–</p>
+                                <p class="profile-location">📍 Lima, Perú</p>
+                            </div>
+                        </div>
+                        <p style="color:#667;font-size:.88rem;margin:.75rem 0 0;">Categoría favorita: <strong id="p-categoria">–</strong></p>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <strong id="p-puntos">–</strong>
+                            <span>Puntos Totales</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong id="p-retos">–</strong>
+                            <span>Retos Completados</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong id="p-co2">– kg</strong>
+                            <span>CO2 Reducido</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Insignias dinámicas según puntos -->
+                <section class="profile-section">
+                    <h2>Mis Insignias</h2>
+                    <div class="badges-grid" id="badges-grid"></div>
+                </section>
+
+                <!-- Barra de progreso de nivel -->
+                <section class="profile-section">
+                    <h2>Progreso de Nivel</h2>
+                    <div style="background:#f4f6f5;border-radius:12px;padding:1.25rem;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:.6rem;">
+                            <span style="font-weight:600;" id="p-nivel-actual">–</span>
+                            <span style="color:#2dbf72;font-weight:700;" id="p-nivel-sig">–</span>
+                        </div>
+                        <div class="meter" style="height:12px;">
+                            <span id="p-prog-bar" style="width:0%;transition:width .8s ease;"></span>
+                        </div>
+                        <p style="margin-top:.5rem;font-size:.82rem;color:#888;" id="p-prog-texto">–</p>
+                    </div>
+                </section>
+
+                <!-- Impacto ambiental calculado -->
+                <section class="profile-section">
+                    <h2>Mi Impacto Ambiental</h2>
+                    <div class="impact-list">
+                        <div class="impact-item">
+                            <div class="impact-header">
+                                <span class="impact-icon">🌳</span>
+                                <span class="impact-name">Árboles equivalentes</span>
+                                <span class="impact-percent" id="imp-arboles">–</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" id="imp-bar-arb" style="width:0%;"></div></div>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-header">
+                                <span class="impact-icon">🚗</span>
+                                <span class="impact-name">km en auto ahorrados</span>
+                                <span class="impact-percent" id="imp-km">–</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" id="imp-bar-km" style="width:0%;"></div></div>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-header">
+                                <span class="impact-icon">💡</span>
+                                <span class="impact-name">horas LED apagadas</span>
+                                <span class="impact-percent" id="imp-led">–</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" id="imp-bar-led" style="width:0%;"></div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Actividad reciente -->
+                <section class="profile-section next-goal">
+                    <div class="goal-card">
+                        <h3>Siguiente Meta</h3>
+                        <h2 id="meta-titulo">–</h2>
+                        <p id="meta-desc" style="color:#fff;opacity:.9;font-size:.9rem;"></p>
+                        <div class="goal-progress">
+                            <div class="goal-progress-bar">
+                                <div class="goal-progress-fill" id="meta-bar" style="width:0%;"></div>
+                            </div>
+                            <span id="meta-pct">0% completado</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+const CORREO = '@Html.Raw(correoUsuario)';
+
+const NIVELES = [
+    {min:0,    max:50,   nombre:'Nuevo Recluta',    sig:'Eco Iniciado'},
+    {min:50,   max:200,  nombre:'Eco Iniciado',      sig:'Eco Explorer'},
+    {min:200,  max:500,  nombre:'Eco Explorer',      sig:'Agente Sostenible'},
+    {min:500,  max:1000, nombre:'Agente Sostenible', sig:'Guardián Verde'},
+    {min:1000, max:2000, nombre:'Guardián Verde',    sig:'Leyenda Eco'},
+    {min:2000, max:3000, nombre:'Leyenda Eco',       sig:'Maestro Eco'},
+    {min:3000, max:5000, nombre:'Maestro Eco',       sig:'🏆 Máximo Nivel'},
+];
+
+function calcularNivel(puntos){
+    return NIVELES.find(n=>puntos>=n.min&&puntos<n.max)||NIVELES[NIVELES.length-1];
+}
+
+function calcularInsignias(retos,puntos){
+    const all=[
+        {emoji:'🌱',titulo:'Primer Paso',    desc:'Completaste tu primer reto',      req:1},
+        {emoji:'♻️',titulo:'Reciclador',     desc:'5 retos completados',             req:5},
+        {emoji:'🚲',titulo:'Eco Ciclista',   desc:'Ahorraste tu primer kg de CO2',   req:0, co2:1},
+        {emoji:'💧',titulo:'Guardián Agua',  desc:'10 retos completados',            req:10},
+        {emoji:'🌳',titulo:'Reforestador',   desc:'200 puntos acumulados',           req:0, pts:200},
+        {emoji:'⚡',titulo:'Ahorro Energía', desc:'500 puntos acumulados',           req:0, pts:500},
+        {emoji:'🏆',titulo:'Leyenda Eco',    desc:'1000 puntos acumulados',          req:0, pts:1000},
+        {emoji:'🎖️',titulo:'Guardián Verde', desc:'2000 puntos acumulados',          req:0, pts:2000},
+    ];
+    return all.filter(i=>{
+        if(i.pts) return puntos>=i.pts;
+        if(i.co2) return retos*(1.05)>=i.co2;
+        return retos>=i.req;
+    });
+}
+
+async function cargarPerfil(){
+    try{
+        const correo = CORREO || '';
+        const url = correo ? `/api/home/perfil?correo=${encodeURIComponent(correo)}` : '/api/home/perfil';
+        const resp = await fetch(url);
+        if(!resp.ok) throw new Error('not found');
+        const p = await resp.json();
+
+        document.getElementById('perfil-loading').style.display='none';
+        document.getElementById('perfil-content').style.display='block';
+
+        // Header
+        document.getElementById('header-puntos').textContent=`${p.puntos.toLocaleString()} pts`;
+
+        // Avatar iniciales
+        const ini=p.nombre.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+        document.getElementById('p-iniciales').textContent=ini;
+        document.getElementById('p-nombre').textContent=p.nombre;
+        document.getElementById('p-nivel').textContent=p.nivel;
+        document.getElementById('p-categoria').textContent=p.categoriaFavorita||'General';
+        document.getElementById('p-puntos').textContent=p.puntos.toLocaleString();
+        document.getElementById('p-retos').textContent=p.retosCompletados;
+        document.getElementById('p-co2').textContent=`${p.reduccionCO2Kg} kg`;
+
+        // Nivel y progreso
+        const nv=calcularNivel(p.puntos);
+        const pct=Math.min(100,Math.round((p.puntos-nv.min)/(nv.max-nv.min)*100));
+        document.getElementById('p-nivel-actual').textContent=nv.nombre;
+        document.getElementById('p-nivel-sig').textContent=`→ ${nv.sig}`;
+        setTimeout(()=>{ document.getElementById('p-prog-bar').style.width=pct+'%'; },200);
+        document.getElementById('p-prog-texto').textContent=
+            `${p.puntos.toLocaleString()} / ${nv.max.toLocaleString()} pts (${pct}% hacia ${nv.sig})`;
+
+        // Insignias
+        const insignias=calcularInsignias(p.retosCompletados,p.puntos);
+        const grid=document.getElementById('badges-grid');
+        if(insignias.length===0){
+            grid.innerHTML='<p style="color:#aaa;grid-column:1/-1;">Completa retos para desbloquear insignias. 🌱</p>';
+        }else{
+            grid.innerHTML=insignias.map(i=>`
+                <div class="badge-card">
+                    <div class="badge-icon">${i.emoji}</div>
+                    <h3>${i.titulo}</h3>
+                    <p>${i.desc}</p>
+                </div>`).join('');
+        }
+
+        // Impacto ambiental
+        const co2=p.reduccionCO2Kg;
+        const arboles=+(co2/21.77).toFixed(1);
+        const km=Math.round(co2/0.12);
+        const led=Math.round(co2/0.01);
+        document.getElementById('imp-arboles').textContent=`${arboles} 🌳`;
+        document.getElementById('imp-km').textContent=`${km.toLocaleString()} km`;
+        document.getElementById('imp-led').textContent=`${led.toLocaleString()} h`;
+        // barras (relativas al máximo hipotético de 100 retos)
+        const maxRef=100;
+        setTimeout(()=>{
+            document.getElementById('imp-bar-arb').style.width=Math.min(100,arboles/5*100)+'%';
+            document.getElementById('imp-bar-km').style.width=Math.min(100,km/1000*100)+'%';
+            document.getElementById('imp-bar-led').style.width=Math.min(100,led/100000*100)+'%';
+        },400);
+
+        // Meta siguiente
+        const meta=nv.max<=p.puntos
+            ? {titulo:'¡Máximo nivel alcanzado!', desc:'Eres una leyenda ecológica. 🏆', pct:100}
+            : {titulo:`Alcanzar "${nv.sig}"`, desc:`Te faltan ${(nv.max-p.puntos).toLocaleString()} puntos. Sigue completando retos.`, pct};
+        document.getElementById('meta-titulo').textContent=meta.titulo;
+        document.getElementById('meta-desc').textContent=meta.desc;
+        document.getElementById('meta-pct').textContent=`${meta.pct}% completado`;
+        setTimeout(()=>{ document.getElementById('meta-bar').style.width=meta.pct+'%'; },600);
+
+    }catch(e){
+        document.getElementById('perfil-loading').innerHTML='<p style="color:#e74c3c;">⚠️ No se pudo cargar el perfil. <a href="javascript:location.reload()">Recargar</a></p>';
+    }
+}
+
+cargarPerfil();
+</script>
+}

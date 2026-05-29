@@ -1,0 +1,385 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["IsDashboard"] = true;
+    var correoUsuario = Context.Session.GetString("UsuarioCorreo") ?? "";
+    var puntosHeader = Model.PuntosUsuario;
+}
+
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link active" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Vista General</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong id="header-puntos">@puntosHeader pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+
+            <!-- BIENVENIDA -->
+            <section class="welcome-row">
+                <div>
+                    <h1>Hola, @ViewData["PrimerNombreUsuario"]! &#127811;</h1>
+                    <p>Has ahorrado aproximadamente <strong id="co2-header">@Model.ReduccionCO2Kg kg de CO2</strong> este mes.</p>
+                </div>
+                <button type="button" class="share-btn" id="btn-compartir">Compartir Estadísticas</button>
+            </section>
+
+            <!-- CLIMA CARD -->
+            <article class="panel-card weather-card" id="weather-card">
+                <div id="weather-loading" style="text-align:center;padding:1.5rem;color:#666;">
+                    <span>🌤 Cargando clima en tiempo real...</span>
+                </div>
+                <div id="weather-content" style="display:none;">
+                    <div class="weather-header">
+                        <div class="weather-location">
+                            <h3>🌍 <span id="w-ciudad">Lima</span></h3>
+                            <p id="w-pais">Perú</p>
+                        </div>
+                        <div class="weather-status">
+                            <span class="status-chip" id="w-estado">–</span>
+                        </div>
+                    </div>
+                    <div class="weather-body">
+                        <div class="temperature-display">
+                            <div class="main-temp">
+                                <span class="temp-value" id="w-temp">–</span>
+                                <span class="temp-unit">°C</span>
+                            </div>
+                            <div class="temp-feel">
+                                Sensación térmica<br/>
+                                <strong><span id="w-sensacion">–</span>°C</strong>
+                            </div>
+                        </div>
+                        <div class="weather-metrics">
+                            <div class="metric">
+                                <span class="metric-label">💨 Viento</span>
+                                <span class="metric-value"><span id="w-viento">–</span> km/h</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">💧 Humedad</span>
+                                <span class="metric-value"><span id="w-humedad">–</span>%</span>
+                            </div>
+                            <div class="metric" id="w-lluvia-box" style="display:none">
+                                <span class="metric-label">🌧 Lluvia</span>
+                                <span class="metric-value"><span id="w-lluvia">0</span> mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weather-recommendation">
+                        <p>🌱 <strong>Recomendación eco (ML.NET):</strong> <span id="w-eco">–</span></p>
+                    </div>
+                    <div style="display:flex;gap:.5rem;margin-top:.75rem;align-items:center;">
+                        <input id="ciudad-input" type="text" placeholder="Cambiar ciudad..." 
+                               style="flex:1;padding:.4rem .75rem;border:1px solid #d0d9d5;border-radius:8px;font-size:.85rem;" />
+                        <button type="button" id="btn-buscar-clima" class="share-btn" style="padding:.4rem 1rem;font-size:.85rem;">Buscar</button>
+                        <small id="w-actualizado" style="color:#aaa;font-size:.75rem;"></small>
+                    </div>
+                </div>
+                <div id="weather-error" style="display:none;text-align:center;padding:1.5rem;">
+                    <p>⚠️ No se pudo obtener el clima. <button type="button" id="btn-retry-clima" style="background:none;border:none;color:#2dbf72;cursor:pointer;font-weight:700;">Reintentar</button></p>
+                </div>
+            </article>
+
+            <!-- KPIs REALES -->
+            <section class="kpi-grid">
+                <article class="kpi-card">
+                    <small>PUNTOS TOTALES</small>
+                    <strong id="kpi-puntos">@Model.PuntosUsuario</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>RETOS COMPLETADOS</small>
+                    <strong id="kpi-retos">@Model.RetosCompletados</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>REDUCCIÓN DE CO2</small>
+                    <strong id="kpi-co2">@Model.ReduccionCO2Kg kg</strong>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="left-column">
+
+                    <!-- PROGRESO -->
+                    <article class="panel-card progress-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Progreso de Eco Warrior</h2>
+                                <p>Nivel <span id="prog-nivel">@Model.NivelUsuario</span> · <span id="prog-faltan">@Model.PuntosParaSiguienteNivel</span> pts para el siguiente rango</p>
+                            </div>
+                            <span class="status-chip">Activo</span>
+                        </div>
+                        <div class="progress-row">
+                            <span>Progreso General</span>
+                            <span id="prog-pct">@Model.PorcentajeProgreso%</span>
+                        </div>
+                        <div class="meter">
+                            <span id="prog-bar" style="width:@Model.PorcentajeProgreso%"></span>
+                        </div>
+                    </article>
+
+                    <!-- ECOBOT IA -->
+                    <article class="panel-card" id="ecobot-card" style="padding:1.25rem;">
+                        <div class="card-head" style="margin-bottom:.75rem;">
+                            <div>
+                                <h3 style="margin:0;">🤖 EcoBot IA</h3>
+                                <small style="color:#888;">Agente Semantic Kernel + GPT</small>
+                            </div>
+                            <span class="status-chip" style="background:#e8f5e9;color:#2e7d32;">Activo</span>
+                        </div>
+                        <div id="ecobot-historial" style="min-height:80px;max-height:220px;overflow-y:auto;margin-bottom:.75rem;font-size:.88rem;color:#444;background:#f9fafb;border-radius:8px;padding:.75rem;"></div>
+                        <div style="display:flex;gap:.5rem;">
+                            <input id="ecobot-input" type="text" placeholder="Ej: ¿Cómo reduzco mi huella de carbono?" maxlength="200"
+                                   style="flex:1;padding:.5rem .75rem;border:1px solid #dce5e0;border-radius:8px;font-size:.88rem;" />
+                            <button id="ecobot-send" type="button" class="share-btn" style="padding:.5rem 1rem;">Enviar</button>
+                        </div>
+                        <div id="ecobot-loading" style="display:none;font-size:.8rem;color:#888;margin-top:.4rem;">🌱 EcoBot está pensando...</div>
+                    </article>
+                </div>
+
+                <div class="right-column">
+
+                    <!-- RETO IA PERSONALIZADO -->
+                    <article class="challenge-card">
+                        <span class="timer" id="reto-badge">Reto IA</span>
+                        <h3 id="reto-ia-titulo">Generando tu reto...</h3>
+                        <p id="reto-ia-desc" style="font-size:.85rem;margin:.5rem 0 1rem;opacity:.85;">EcoBot crea un reto personalizado según tu nivel.</p>
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                            <button type="button" id="btn-aceptar-reto" style="flex:1;padding:.55rem;background:#fff;color:#1a5c35;border:2px solid #fff;border-radius:8px;font-weight:700;cursor:pointer;">✅ Aceptar Reto</button>
+                            <button type="button" id="btn-nuevo-reto" style="flex:1;padding:.55rem;background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:8px;font-weight:600;cursor:pointer;">🔄 Otro Reto</button>
+                        </div>
+                    </article>
+
+                    <!-- RANKING TOP 5 REAL -->
+                    <article class="panel-card leaderboard-card">
+                        <h3>Líderes</h3>
+                        <ul id="ranking-list" style="list-style:none;padding:0;margin:.5rem 0;">
+                            <li style="color:#aaa;padding:.5rem;">Cargando ranking...</li>
+                        </ul>
+                        <a class="ranking-btn" asp-controller="Home" asp-action="Ranking">Ranking Completo →</a>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</section>
+
+<!-- TOAST notificaciones -->
+<div id="eco-toast" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;background:#1a5c35;color:#fff;padding:.75rem 1.25rem;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:320px;"></div>
+
+@section Scripts {
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// EcoWarrior Dashboard — Scripts completamente funcionales
+// ═══════════════════════════════════════════════════════════════════
+
+const CORREO_USUARIO = '@Html.Raw(correoUsuario)';
+let _retoIAActual = null;
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function mostrarToast(msg, color = '#1a5c35') {
+    const t = document.getElementById('eco-toast');
+    t.textContent = msg;
+    t.style.background = color;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+// ── CLIMA API ──────────────────────────────────────────────────────
+async function cargarClima(ciudad = 'Lima') {
+    const loading = document.getElementById('weather-loading');
+    const content = document.getElementById('weather-content');
+    const error   = document.getElementById('weather-error');
+    loading.style.display = 'block';
+    content.style.display = 'none';
+    error.style.display   = 'none';
+
+    try {
+        const resp = await fetch(`/api/clima?ciudad=${encodeURIComponent(ciudad)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const d = await resp.json();
+
+        document.getElementById('w-ciudad').textContent   = d.ciudad || ciudad;
+        document.getElementById('w-pais').textContent     = [d.pais, d.nombreRegion].filter(Boolean).join(' · ');
+        document.getElementById('w-estado').textContent   = d.climaActual?.estadoClima || '–';
+        document.getElementById('w-temp').textContent     = Math.round(d.climaActual?.temperatura ?? 0);
+        document.getElementById('w-sensacion').textContent= Math.round(d.climaActual?.sensacionTermica ?? 0);
+        document.getElementById('w-viento').textContent   = Math.round(d.climaActual?.velocidadViento ?? 0);
+        document.getElementById('w-humedad').textContent  = Math.round(d.climaActual?.humedad ?? 0);
+        document.getElementById('w-eco').textContent      = d.mensajeEco || '–';
+
+        const lluvia = d.climaActual?.precipitacion ?? 0;
+        if (lluvia > 0) {
+            document.getElementById('w-lluvia').textContent = lluvia.toFixed(1);
+            document.getElementById('w-lluvia-box').style.display = '';
+        }
+
+        if (d.fechaConsulta) {
+            const f = new Date(d.fechaConsulta);
+            document.getElementById('w-actualizado').textContent = 
+                `Actualizado: ${f.toLocaleTimeString('es-PE', {hour:'2-digit',minute:'2-digit'})}`;
+        }
+
+        loading.style.display = 'none';
+        content.style.display = 'block';
+    } catch (e) {
+        console.error('Clima error:', e);
+        loading.style.display = 'none';
+        error.style.display   = 'block';
+    }
+}
+
+document.getElementById('btn-buscar-clima').addEventListener('click', () => {
+    const ciudad = document.getElementById('ciudad-input').value.trim();
+    if (ciudad) cargarClima(ciudad);
+});
+document.getElementById('ciudad-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('btn-buscar-clima').click();
+});
+document.getElementById('btn-retry-clima')?.addEventListener('click', () => cargarClima());
+
+// ── RANKING REAL ───────────────────────────────────────────────────
+async function cargarRanking() {
+    try {
+        const resp = await fetch('/api/home/ranking');
+        const data = await resp.json();
+        const lista = document.getElementById('ranking-list');
+        lista.innerHTML = data.slice(0,5).map((r, i) => {
+            const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${r.posicion}`;
+            const esTu = r.correo === CORREO_USUARIO;
+            return `<li style="display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid #eef0ee;${esTu?'font-weight:700;color:#1a5c35;':''}">
+                <span style="min-width:24px;text-align:center;">${medalla}</span>
+                <span style="flex:1;font-size:.9rem;">${r.usuario}${esTu?' (tú)':''}</span>
+                <em style="font-style:normal;color:#2dbf72;font-weight:700;">${r.puntos.toLocaleString()}</em>
+            </li>`;
+        }).join('');
+    } catch (e) {
+        document.getElementById('ranking-list').innerHTML = '<li style="color:#aaa;padding:.5rem;">Error cargando ranking.</li>';
+    }
+}
+
+// ── ECOBOT CHAT ────────────────────────────────────────────────────
+const ecobotHistorial = document.getElementById('ecobot-historial');
+
+function agregarMensajeBot(autor, texto, esBot) {
+    const div = document.createElement('div');
+    div.style.cssText = `margin-bottom:.6rem;padding:.5rem .75rem;border-radius:8px;background:${esBot?'#f0fdf4':'#e8f5e9'};font-size:.88rem;`;
+    div.innerHTML = `<strong style="color:${esBot?'#1a5c35':'#374151'};">${autor}:</strong> ${texto}`;
+    ecobotHistorial.appendChild(div);
+    ecobotHistorial.scrollTop = ecobotHistorial.scrollHeight;
+}
+
+// Mensaje de bienvenida
+agregarMensajeBot('🤖 EcoBot', '¡Hola! Soy tu asesor ecológico. Pregúntame sobre sostenibilidad, huella de carbono, o cómo mejorar tu impacto ambiental en Lima.', true);
+
+document.getElementById('ecobot-send').addEventListener('click', async () => {
+    const input   = document.getElementById('ecobot-input');
+    const loading = document.getElementById('ecobot-loading');
+    const pregunta = input.value.trim();
+    if (!pregunta) return;
+    input.value = '';
+    agregarMensajeBot('Tú', pregunta, false);
+    document.getElementById('ecobot-send').disabled = true;
+    loading.style.display = 'block';
+
+    try {
+        const ciudad = document.getElementById('w-ciudad')?.textContent || 'Lima';
+        const resp = await fetch('/api/ecobot/consultar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pregunta, ciudad })
+        });
+        const data = await resp.json();
+        agregarMensajeBot('🤖 EcoBot', data.respuesta || 'Sin respuesta del agente.', true);
+    } catch {
+        agregarMensajeBot('🤖 EcoBot', 'Error de conexión. Intenta nuevamente en un momento.', true);
+    } finally {
+        document.getElementById('ecobot-send').disabled = false;
+        loading.style.display = 'none';
+    }
+});
+document.getElementById('ecobot-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('ecobot-send').click();
+});
+
+// ── RETO PERSONALIZADO IA ──────────────────────────────────────────
+async function generarRetoIA() {
+    const btn = document.getElementById('btn-nuevo-reto');
+    btn.disabled = true;
+    btn.textContent = '⏳ Generando...';
+    document.getElementById('reto-ia-titulo').textContent = 'EcoBot está creando tu reto...';
+    document.getElementById('reto-ia-desc').textContent   = '';
+    _retoIAActual = null;
+
+    try {
+        const resp = await fetch('/api/ecobot/reto-personalizado', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ puntos: @Model.PuntosUsuario, categoriaFavorita: 'General' })
+        });
+        const data = await resp.json();
+        const reto = JSON.parse(data.respuesta);
+        _retoIAActual = reto;
+        document.getElementById('reto-ia-titulo').textContent = reto.titulo ?? 'Reto Eco IA';
+        document.getElementById('reto-ia-desc').textContent =
+            `${reto.descripcion ?? ''} · +${reto.puntos ?? 0} pts · ${reto.dificultad ?? ''}`;
+        document.getElementById('reto-badge').textContent = `IA · ${reto.dificultad ?? ''}`;
+    } catch {
+        document.getElementById('reto-ia-titulo').textContent = 'Reto Eco del Día';
+        document.getElementById('reto-ia-desc').textContent   = 'Reduce tu consumo de plástico durante 24 horas. · +75 pts · Media';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Otro Reto';
+    }
+}
+
+document.getElementById('btn-nuevo-reto').addEventListener('click', generarRetoIA);
+document.getElementById('btn-aceptar-reto').addEventListener('click', () => {
+    if (_retoIAActual) {
+        mostrarToast(`✅ Reto "${_retoIAActual.titulo}" aceptado. ¡Mucho ánimo!`);
+    } else {
+        mostrarToast('✅ ¡Reto aceptado! Complétalo y gana tus puntos.');
+    }
+});
+
+// ── COMPARTIR ──────────────────────────────────────────────────────
+document.getElementById('btn-compartir').addEventListener('click', () => {
+    const texto = `🌿 Soy Eco Warrior en EcoWarrior!\n🏆 @Model.PuntosUsuario puntos\n✅ @Model.RetosCompletados retos\n🌍 @Model.ReduccionCO2Kg kg CO2 ahorrados\n#EcoWarrior #Sostenibilidad`;
+    if (navigator.share) {
+        navigator.share({ title: 'Mis Estadísticas EcoWarrior', text: texto });
+    } else {
+        navigator.clipboard.writeText(texto).then(() => mostrarToast('📋 Estadísticas copiadas al portapapeles'));
+    }
+});
+
+// ── INIT ───────────────────────────────────────────────────────────
+cargarClima('@(Model.Clima?.Ciudad ?? "Lima")');
+cargarRanking();
+generarRetoIA();
+</script>
+}

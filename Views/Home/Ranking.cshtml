@@ -1,0 +1,165 @@
+@{
+    ViewData["Title"] = "Ranking";
+    ViewData["IsDashboard"] = true;
+    var correoUsuario = Context.Session.GetString("UsuarioCorreo") ?? "";
+}
+
+<section class="dashboard-shell ranking-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Clasificación Global</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong id="header-puntos">… pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="retos-content ranking-content">
+            <section class="ranking-intro">
+                <h2>Tabla de Posiciones</h2>
+                <p>Reconocemos a los guerreros ecológicos más dedicados. Completa retos y sube en el ranking para ganar recompensas exclusivas.</p>
+            </section>
+
+            <!-- Podio Top 3 -->
+            <div id="podio-container" style="display:none;justify-content:center;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+                <div id="podio-2" class="podio-item" style="--h:90px;"></div>
+                <div id="podio-1" class="podio-item podio-first" style="--h:120px;"></div>
+                <div id="podio-3" class="podio-item" style="--h:70px;"></div>
+            </div>
+
+            <!-- Tabla completa -->
+            <section class="ranking-table-card">
+                <div class="ranking-table-head">
+                    <span>Rango</span>
+                    <span>Usuario</span>
+                    <span>Nivel</span>
+                    <span>Retos</span>
+                    <span>Puntos</span>
+                </div>
+                <div id="ranking-loading" style="text-align:center;padding:2rem;color:#aaa;">🏆 Cargando ranking...</div>
+                <div id="ranking-rows"></div>
+            </section>
+
+            <!-- Tu posición destacada -->
+            <div id="tu-posicion" style="display:none;margin-top:1.25rem;" class="ranking-cta">
+                <div>
+                    <h3>Tu posición</h3>
+                    <p id="tu-pos-texto">Estás en el puesto <strong id="tu-pos-num">–</strong> con <strong id="tu-pos-pts">–</strong> puntos.</p>
+                </div>
+                <a asp-controller="Home" asp-action="Retos">Ganar más puntos →</a>
+            </div>
+        </main>
+    </div>
+</section>
+
+@section Scripts {
+<style>
+.podio-item{display:flex;flex-direction:column;align-items:center;gap:.4rem;min-width:90px;}
+.podio-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#36cf7c,#29b565);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 14px rgba(46,204,113,.35);}
+.podio-first .podio-avatar{width:64px;height:64px;font-size:1.3rem;background:linear-gradient(135deg,#f1c40f,#e67e22);}
+.podio-base{width:100%;height:var(--h);border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;}
+.podio-item:nth-child(1) .podio-base{background:#c0c0c0;color:#fff;}
+.podio-item:nth-child(2) .podio-base{background:linear-gradient(180deg,#f1c40f,#e67e22);color:#fff;}
+.podio-item:nth-child(3) .podio-base{background:#cd7f32;color:#fff;}
+.ranking-row-v2{display:grid;grid-template-columns:50px 1fr 120px 80px 90px;align-items:center;gap:.5rem;padding:.75rem 1rem;border-bottom:1px solid #f0f2f0;transition:background .15s;}
+.ranking-row-v2:hover{background:#f7fdf9;}
+.ranking-row-v2.es-tu{background:#e8f5e9;font-weight:700;}
+.rank-medal{font-size:1.3rem;text-align:center;}
+.rank-num{text-align:center;font-weight:700;color:#536160;font-size:.95rem;}
+.nivel-chip{padding:.2rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700;background:#e8f5e9;color:#1a5c35;}
+</style>
+<script>
+const CORREO = '@Html.Raw(correoUsuario)';
+
+async function cargarRanking(){
+    try{
+        const resp = await fetch('/api/home/ranking');
+        const data = await resp.json();
+
+        document.getElementById('ranking-loading').style.display='none';
+
+        // Podio
+        if(data.length>=3){
+            const pc=document.getElementById('podio-container');
+            pc.style.display='flex';
+            const renderPodio=(el,r,medal)=>{
+                const ini=r.usuario.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+                el.innerHTML=`
+                    <div class="podio-avatar">${ini}</div>
+                    <p style="font-size:.8rem;font-weight:700;text-align:center;max-width:90px;">${r.usuario}</p>
+                    <p style="font-size:.75rem;color:#2dbf72;font-weight:700;">${r.puntos.toLocaleString()}</p>
+                    <div class="podio-base">${medal}</div>`;
+            };
+            renderPodio(document.getElementById('podio-1'),data[0],'🥇');
+            renderPodio(document.getElementById('podio-2'),data[1],'🥈');
+            renderPodio(document.getElementById('podio-3'),data[2],'🥉');
+        }
+
+        // Tabla
+        const rows=document.getElementById('ranking-rows');
+        rows.innerHTML='';
+        let miPosicion=null;
+        data.forEach((r,i)=>{
+            const esTu=r.correo===CORREO;
+            if(esTu) miPosicion=r;
+            const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+            const ini=r.usuario.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+            const row=document.createElement('div');
+            row.className='ranking-row-v2'+(esTu?' es-tu':'');
+            row.innerHTML=`
+                <span class="${medal?'rank-medal':'rank-num'}">${medal||r.posicion}</span>
+                <div style="display:flex;align-items:center;gap:.6rem;">
+                    <div style="width:34px;height:34px;border-radius:50%;background:${esTu?'linear-gradient(135deg,#36cf7c,#29b565)':'#e8f0ec'};color:${esTu?'#fff':'#536160'};font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.78rem;">${ini}</div>
+                    <span>${r.usuario}${esTu?' <em style="font-size:.75rem;color:#2dbf72;">(tú)</em>':''}</span>
+                </div>
+                <span class="nivel-chip">${r.nivel}</span>
+                <span style="text-align:center;color:#888;font-size:.88rem;">${r.retosCompletados}</span>
+                <strong style="color:#1a5c35;">${r.puntos.toLocaleString()}</strong>`;
+            rows.appendChild(row);
+        });
+
+        // Tu posición
+        if(miPosicion){
+            document.getElementById('header-puntos').textContent=`${miPosicion.puntos.toLocaleString()} pts`;
+            document.getElementById('tu-posicion').style.display='block';
+            document.getElementById('tu-pos-num').textContent=miPosicion.posicion;
+            document.getElementById('tu-pos-pts').textContent=miPosicion.puntos.toLocaleString();
+        }else if(CORREO){
+            // buscar perfil propio si no está en top lista
+            const pr=await fetch(`/api/home/perfil?correo=${encodeURIComponent(CORREO)}`);
+            if(pr.ok){
+                const p=await pr.json();
+                document.getElementById('header-puntos').textContent=`${p.puntos.toLocaleString()} pts`;
+            }
+        }
+    }catch(e){
+        document.getElementById('ranking-loading').textContent='⚠️ Error cargando el ranking. Recarga la página.';
+    }
+}
+
+cargarRanking();
+</script>
+}

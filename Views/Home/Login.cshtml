@@ -1,0 +1,55 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>EcoWarrior — Iniciar sesión</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <style>
+        body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d3d22 0%,#1a5c35 50%,#2dbf72 100%);}
+        .login-box{background:#fff;border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+        .login-logo{font-size:1.8rem;font-weight:800;color:#2dbf72;text-align:center;margin-bottom:.25rem;}
+        .login-sub{text-align:center;color:#888;font-size:.9rem;margin-bottom:2rem;}
+        .form-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.1rem;}
+        .form-group label{font-size:.82rem;font-weight:700;color:#536160;}
+        .form-group input{padding:.65rem .9rem;border:2px solid #e0e7e3;border-radius:10px;font-size:.95rem;transition:border-color .2s;outline:none;}
+        .form-group input:focus{border-color:#2dbf72;}
+        .btn-login{width:100%;padding:.75rem;border:none;border-radius:12px;background:linear-gradient(90deg,#36cf7c,#1a5c35);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;margin-top:.5rem;transition:filter .2s;}
+        .btn-login:hover{filter:brightness(1.08);}
+        .alt-link{text-align:center;margin-top:1.25rem;font-size:.88rem;color:#888;}
+        .alt-link a{color:#2dbf72;font-weight:700;text-decoration:none;}
+        .validation-summary-errors ul{list-style:none;padding:0;background:#fef2f2;border-radius:8px;padding:.65rem .9rem;color:#c0392b;font-size:.85rem;}
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <div class="login-logo">🌿 EcoWarrior</div>
+    <p class="login-sub">Inicia sesión para continuar tu misión ecológica</p>
+
+    <div asp-validation-summary="All"></div>
+
+    <form asp-action="Login" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            <input asp-for="Correo" type="email" placeholder="eco@ejemplo.com" autocomplete="email"/>
+            <span asp-validation-for="Correo" style="color:#e74c3c;font-size:.78rem;"></span>
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input asp-for="Contrasena" type="password" placeholder="••••••••" autocomplete="current-password"/>
+            <span asp-validation-for="Contrasena" style="color:#e74c3c;font-size:.78rem;"></span>
+        </div>
+        <button type="submit" class="btn-login">Iniciar sesión</button>
+    </form>
+
+    <p class="alt-link">¿No tienes cuenta? <a asp-action="Registro">Regístrate gratis</a></p>
+    <p class="alt-link" style="margin-top:.5rem;font-size:.78rem;color:#bbb;">Demo: admin@ecowarrior.com / Eco12345</p>
+</div>
+</body>
+</html>
