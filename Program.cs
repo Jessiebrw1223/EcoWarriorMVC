@@ -48,6 +48,9 @@ builder.Services.AddScoped<IEcoAiAgentService, EcoAiAgentService>();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+
+MLTrainingService.TrainModel();
+
 var app = builder.Build();
 
 // ─── Middleware ────────────────────────────────────────────────────
