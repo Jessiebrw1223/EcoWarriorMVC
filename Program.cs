@@ -25,7 +25,11 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 var app = builder.Build();
 
-app.UseDeveloperExceptionPage();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
@@ -37,13 +41,10 @@ app.UseSession();
 
 app.UseAuthorization();
 
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
 
 DbInitializer.EnsureSeeded(app.Services);
-
-app.Urls.Add("http://0.0.0.0:8080");
 
 app.Run();
