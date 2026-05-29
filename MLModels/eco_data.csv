@@ -1,9 +1,9 @@
-Temperatura,Humedad,Viento,Recomendacion
-30,80,10,Usa ropa ligera y evita plásticos
-18,50,5,Aprovecha luz solar natural
-12,90,15,Reduce uso de calefacción
-25,60,8,Usa bicicleta en lugar de auto
-35,40,12,Hidrátate y reutiliza agua
-20,70,7,Recicla residuos orgánicos
-15,85,20,Ahorra energía en casa
-28,55,9,Evita bolsas plásticas
+Temperature,Humidity,WindSpeed,Recommendation
+35,70,10,Hidratarse y evitar plásticos
+20,50,5,Usar bicicleta o caminar
+15,80,20,Aprovechar ventilación natural
+10,90,30,Reducir uso de calefacción
+28,60,8,Usar transporte sostenible
+30,75,12,Consumir menos energía
+18,65,7,Reciclar residuos orgánicos
+22,55,5,Usar botella reutilizable
