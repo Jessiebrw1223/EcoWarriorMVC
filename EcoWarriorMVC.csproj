@@ -14,16 +14,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.ML" Version="4.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-preview.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0-preview.3.25171.6" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="MLModels\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
+    <PackageReference Include="Microsoft.ML" Version="4.0.0" />
+
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.30.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.30.0" />
+
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0-preview.3.25171.6" />
   </ItemGroup>
 
 </Project>
