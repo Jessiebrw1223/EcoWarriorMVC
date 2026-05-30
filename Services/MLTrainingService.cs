@@ -8,7 +8,7 @@ public class MLTrainingService
     public static ITransformer TrainModel(MLContext mlContext)
     {
         var dataPath = Path.Combine(
-            AppContext.BaseDirectory,
+            Directory.GetCurrentDirectory(),
             "MLModels",
             "eco_data.csv");
 
@@ -17,7 +17,8 @@ public class MLTrainingService
             throw new FileNotFoundException(
                 $"No se encontró el dataset ML.NET en: {dataPath}");
         }
-
+Console.WriteLine($"ML PATH: {dataPath}");
+Console.WriteLine($"EXISTS: {File.Exists(dataPath)}");
         var data = mlContext.Data.LoadFromTextFile<EcoData>(
             path: dataPath,
             hasHeader: true,
