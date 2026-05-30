@@ -75,20 +75,6 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 // ─────────────────────────────────────────────
 // ENTRENAR ML.NET
 // ─────────────────────────────────────────────
-var mlContext = new MLContext();
-
-try
-{
-    MLTrainingService.TrainModel(mlContext);
-
-    Console.WriteLine("✅ Modelo ML.NET entrenado correctamente.");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(
-        $"❌ Error entrenando ML.NET: {ex.Message}");
-}
-
 var app = builder.Build();
 
 // ─────────────────────────────────────────────

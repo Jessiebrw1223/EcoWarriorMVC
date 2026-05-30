@@ -11,7 +11,11 @@ namespace EcoWarriorMVC.Services;
 /// </summary>
 public class EcoRecommendationService : IEcoRecommendationService
 {
-    private readonly Lazy<(MLContext Context, ITransformer Model)> _lazyModel;
+    private readonly Lazy<
+        (MLContext Ctx,
+         ITransformer Model,
+         DataViewSchema Schema)> _lazy;
+
     private readonly ILogger<EcoRecommendationService>? _logger;
 
     public EcoRecommendationService(
@@ -19,47 +23,57 @@ public class EcoRecommendationService : IEcoRecommendationService
     {
         _logger = logger;
 
-        _lazyModel =
-            new Lazy<(MLContext, ITransformer)>(
+        _lazy =
+            new Lazy<
+                (MLContext,
+                 ITransformer,
+                 DataViewSchema)>(
                 EntrenarModelo,
                 LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    /// <summary>
-    /// Genera recomendación ecológica basada en clima.
-    /// </summary>
     public string ObtenerMensajeEco(CurrentWeatherResponse clima)
     {
         try
         {
-            var (context, model) = _lazyModel.Value;
+            var (ctx, model, schema) = _lazy.Value;
 
-            var predictionEngine =
-                context.Model.CreatePredictionEngine<
-                    ClimaEntrada,
-                    RecomendacionSalida>(model);
+            var engine =
+                ctx.Model.CreatePredictionEngine
+                    <ClimaEntrada, RecomendacionSalida>(
+                        model,
+                        inputSchema: schema);
 
-            var input = new ClimaEntrada
-            {
-                Temperatura = (float)clima.Temperatura,
-                Humedad = (float)clima.Humedad,
-                Viento = (float)clima.VelocidadViento,
-                Precipitacion = (float)clima.Precipitacion,
-                CodigoClima = clima.CodigoClima
-            };
+            var prediccion =
+                engine.Predict(new ClimaEntrada
+                {
+                    Temperatura =
+                        (float)clima.Temperatura,
 
-            var prediction = predictionEngine.Predict(input);
+                    Humedad =
+                        (float)clima.Humedad,
+
+                    Viento =
+                        (float)clima.VelocidadViento,
+
+                    Precipitacion =
+                        (float)clima.Precipitacion,
+
+                    CodigoClima =
+                        clima.CodigoClima
+                });
 
             return ObtenerMensajePorCategoria(
-                prediction.Categoria);
+                prediccion.Categoria);
         }
         catch (Exception ex)
         {
             _logger?.LogError(
                 ex,
-                "Error ejecutando ML.NET.");
+                "Error ML.NET");
 
-            return ObtenerMensajePorCategoria("Default");
+            return ObtenerMensajePorCategoria(
+                "Default");
         }
     }
 
@@ -67,47 +81,56 @@ public class EcoRecommendationService : IEcoRecommendationService
     // ENTRENAMIENTO DEL MODELO
     // =========================================================
 
-    private static (MLContext, ITransformer) EntrenarModelo()
-    {
-        var context = new MLContext(seed: 42);
+    private static (
+    MLContext,
+    ITransformer,
+    DataViewSchema)
+    EntrenarModelo()
+{
+    var ctx = new MLContext(seed: 42);
 
-        var datos = ObtenerDatosEntrenamiento();
+    var datos = ObtenerDatosEntrenamiento();
 
-        var dataView =
-            context.Data.LoadFromEnumerable(datos);
+    var dataView =
+        ctx.Data.LoadFromEnumerable(datos);
 
-        var pipeline =
-            context.Transforms.Conversion.MapValueToKey(
-                outputColumnName: "Label",
-                inputColumnName: nameof(ClimaEntrada.Categoria))
+    var inputSchema = dataView.Schema;
 
-            .Append(
-                context.Transforms.Concatenate(
-                    "Features",
-                    nameof(ClimaEntrada.Temperatura),
-                    nameof(ClimaEntrada.Humedad),
-                    nameof(ClimaEntrada.Viento),
-                    nameof(ClimaEntrada.Precipitacion),
-                    nameof(ClimaEntrada.CodigoClima)))
+    var pipeline =
+        ctx.Transforms.Conversion.MapValueToKey(
+            outputColumnName: "Label",
+            inputColumnName:
+                nameof(ClimaEntrada.Categoria))
 
-            .Append(
-                context.Transforms.NormalizeMinMax("Features"))
+        .Append(
+            ctx.Transforms.Concatenate(
+                "Features",
+                nameof(ClimaEntrada.Temperatura),
+                nameof(ClimaEntrada.Humedad),
+                nameof(ClimaEntrada.Viento),
+                nameof(ClimaEntrada.Precipitacion),
+                nameof(ClimaEntrada.CodigoClima)))
 
-            .Append(
-                context.MulticlassClassification.Trainers
-                    .SdcaMaximumEntropy())
+        .Append(
+            ctx.Transforms.NormalizeMinMax(
+                "Features"))
 
-            .Append(
-                context.Transforms.Conversion.MapKeyToValue(
-                    outputColumnName:
-                        nameof(RecomendacionSalida.Categoria),
-                    inputColumnName: "PredictedLabel"));
+        .Append(
+            ctx.MulticlassClassification.Trainers
+                .SdcaMaximumEntropy(
+                    maximumNumberOfIterations: 100))
 
-        var model = pipeline.Fit(dataView);
+        .Append(
+            ctx.Transforms.Conversion.MapKeyToValue(
+                outputColumnName:
+                    nameof(RecomendacionSalida.Categoria),
+                inputColumnName:
+                    "PredictedLabel"));
 
-        return (context, model);
-    }
+    var model = pipeline.Fit(dataView);
 
+    return (ctx, model, inputSchema);
+}
     // =========================================================
     // DATASET DE ENTRENAMIENTO
     // =========================================================
