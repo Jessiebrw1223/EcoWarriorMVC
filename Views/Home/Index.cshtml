@@ -1,0 +1,172 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["IsDashboard"] = true;
+}
+
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link active" href="#">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Vista General</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@Model.StockDisponible pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <section class="welcome-row">
+                <div>
+                    <h1>Hola, @ViewData["PrimerNombreUsuario"]! &#127811;</h1>
+                    <p>Has ahorrado aproximadamente <strong>3.2 kg de CO2</strong> este mes.</p>
+                </div>
+                <button type="button" class="share-btn">Compartir Estadisticas</button>
+            </section>
+
+            @if (Model.Clima?.ClimaActual is not null)
+            {
+                <article class="panel-card weather-card">
+                    <div class="weather-header">
+                        <div class="weather-location">
+                            <h3>🌍 @Model.Clima.Ciudad</h3>
+                            <p>@Model.Clima.Pais</p>
+                        </div>
+                        <div class="weather-status">
+                            <span class="status-chip">@Model.Clima.ClimaActual.EstadoClima</span>
+                        </div>
+                    </div>
+
+                    <div class="weather-body">
+                        <div class="temperature-display">
+                            <div class="main-temp">
+                                <span class="temp-value">@Model.Clima.ClimaActual.Temperatura.ToString("0")</span>
+                                <span class="temp-unit">°C</span>
+                            </div>
+                            <div class="temp-feel">
+                                Sensación térmica<br />
+                                <strong>@Model.Clima.ClimaActual.SensacionTermica.ToString("0")°C</strong>
+                            </div>
+                        </div>
+
+                        <div class="weather-metrics">
+                            <div class="metric">
+                                <span class="metric-label">💨 Viento</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.VelocidadViento.ToString("0") km/h</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">💧 Humedad</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.Humedad.ToString("0")%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weather-recommendation">
+                        <p>🌱 <strong>Recomendación eco (ML.NET):</strong> @Model.Clima.MensajeEco</p>
+                    </div>
+                </article>
+            }
+            else
+            {
+                <article class="panel-card weather-card weather-empty">
+                    <div style="text-align: center; padding: 2rem;">
+                        <p>📍 Agrega tu ciudad para ver el clima</p>
+                        <p style="font-size: 0.9rem; color: #666;">Intenta: <strong>/Home/Index?ciudad=Lima</strong></p>
+                    </div>
+                </article>
+            }
+
+            <section class="kpi-grid">
+                <article class="kpi-card">
+                    <small>Puntos Totales</small>
+                    <strong>@Model.StockDisponible</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Retos Completed</small>
+                    <strong>@Model.TotalProductos</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Reduccion de CO2</small>
+                    <strong>3.2 kg</strong>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="left-column">
+                    <article class="panel-card progress-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Progreso de Eco Warrior</h2>
+                                <p>Nivel 5 - 250 pts para el siguiente rango</p>
+                            </div>
+                            <span class="status-chip">Activo</span>
+                        </div>
+                        <div class="progress-row">
+                            <span>Progreso General</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="meter">
+                            <span style="width:75%"></span>
+                        </div>
+                    </article>
+
+                    <article class="panel-card map-card">
+                        <div class="card-head">
+                            <h3>Encuentros activos cerca de ti</h3>
+                            <a href="#">Ver Lista</a>
+                        </div>
+                        <div class="map-box">Mapa</div>
+                        <div class="map-footer">
+                            <div>
+                                <strong>Zona de Miraflores</strong>
+                                <small>3 eventos activos hoy</small>
+                            </div>
+                            <button type="button">Unirse</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="right-column">
+                    <article class="challenge-card">
+                        <span class="timer">Termina en 4h</span>
+                        <h3>Almuerzo Residuo Cero</h3>
+                        <p>Trae tus recipientes reutilizables hoy y gana 50 pts.</p>
+                        <button type="button">Aceptar Reto</button>
+                    </article>
+
+                    <article class="panel-card leaderboard-card">
+                        <h3>Lideres</h3>
+                        <ul>
+                            <li><span>1</span><strong>Andrea Valera</strong><em>2,840</em></li>
+                            <li><span>2</span><strong>Carlos Ruiz</strong><em>2,510</em></li>
+                            <li><span>3</span><strong>Luis Perez</strong><em>2,100</em></li>
+                        </ul>
+                        <a class="ranking-btn" asp-controller="Home" asp-action="Ranking">Ranking Completo</a>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</section>
