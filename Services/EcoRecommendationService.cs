@@ -13,6 +13,7 @@ public class EcoRecommendationService : IEcoRecommendationService
 {
     private readonly Lazy<(MLContext Ctx, ITransformer Model, DataViewSchema Schema)> _lazy;
     private readonly ILogger<EcoRecommendationService>? _logger;
+    private readonly Random _rng = new();
 
     public EcoRecommendationService(ILogger<EcoRecommendationService>? logger = null)
     {
@@ -139,23 +140,56 @@ public class EcoRecommendationService : IEcoRecommendationService
         new() { Temperatura = 29, Humedad = 65, Viento = 10, Precipitacion = 0, CodigoClima = 2, Categoria = "Hidratacion" }
     ];
 
-    private static string MensajePorCategoria(string? categoria) => categoria switch
+    private static readonly Dictionary<string, string[]> _plantillas = new()
     {
-        "Interior" =>
+        ["Interior"] = new[]
+        {
             "🏠 Buen momento para actividades bajo techo. Aprovecha para organizar residuos, reutilizar materiales y ahorrar electricidad.",
-
-        "Movilidad" =>
+            "🌧️ Está lluvioso afuera — ideal para actividades interiores: lee sobre reciclaje y planifica acciones sostenibles.",
+            "🛋️ Día para quedarse dentro. Aprovecha para reducir consumo eléctrico con gestos simples y reutilizar materiales."
+        },
+        ["Movilidad"] = new[]
+        {
             "🚲 Clima ideal para caminar, usar bicicleta o transporte público. Hoy puedes reducir tu huella de carbono.",
-
-        "Energia" =>
+            "🚶 Aprovecha el buen tiempo: una caminata corta reemplaza viajes en coche y suma salud al planeta.",
+            "🛴 Considera compartir transporte o bicicleta: menos emisiones y más vida en la ciudad." 
+        },
+        ["Energia"] = new[]
+        {
             "💨 Aprovecha la ventilación natural y evita usar equipos eléctricos innecesarios. Cada kWh ahorrado cuenta.",
-
-        "Hidratacion" =>
+            "🔌 Evita picos de consumo: desconecta cargadores y ajusta termostatos para ahorrar energía.",
+            "💡 Usa iluminación eficiente y apaga lo que no uses — pequeño cambio, gran impacto." 
+        },
+        ["Hidratacion"] = new[]
+        {
             "☀️ Temperatura alta: hidrátate con botella reutilizable y evita plásticos de un solo uso.",
-
-        _ =>
-            "🌱 Mantén hábitos sostenibles: recicla, reutiliza, ahorra agua y reduce tu consumo energético."
+            "💧 Mantente hidratado y busca sombra. Lleva tu propia botella reutilizable para reducir residuos.",
+            "🌞 Evita actividades muy intensas al sol y recuerda proteger el entorno evitando plásticos desechables." 
+        },
+        ["Default"] = new[]
+        {
+            "🌱 Mantén hábitos sostenibles: recicla, reutiliza, ahorra agua y reduce tu consumo energético.",
+            "♻️ Pequeños gestos diarios suman: separa residuos y piensa en la reutilización antes de comprar.",
+            "🌿 Considera acciones locales: participa en limpiezas y promueve la movilidad activa." 
+        }
     };
+
+    private string MensajePorCategoria(string? categoria)
+    {
+        var key = string.IsNullOrWhiteSpace(categoria) ? "Default" : categoria;
+        if (!_plantillas.TryGetValue(key, out var opciones))
+        {
+            opciones = _plantillas["Default"];
+        }
+
+        int idx;
+        lock (_rng)
+        {
+            idx = _rng.Next(opciones.Length);
+        }
+
+        return opciones[idx];
+    }
 
     private sealed class ClimaEntrada
     {
