@@ -52,6 +52,19 @@ public class EcoRecommendationService : IEcoRecommendationService
         }
     }
 
+    public void Warmup()
+    {
+        try
+        {
+            // Forzar la evaluación lazy para entrenar el modelo ahora.
+            _ = _lazy.Value;
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "Warmup ML.NET falló.");
+        }
+    }
+
     private static (MLContext, ITransformer, DataViewSchema) EntrenarModelo()
     {
         var ctx = new MLContext(seed: 42);

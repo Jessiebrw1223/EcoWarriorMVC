@@ -68,4 +68,20 @@ app.MapControllerRoute(
 
 DbInitializer.EnsureSeeded(app.Services);
 
+// En desarrollo, entrenar el modelo ML al iniciar para que la vista muestre
+// recomendaciones inmediatamente. Evitar en producción para no bloquear arranque.
+if (app.Environment.IsDevelopment())
+{
+    try
+    {
+        var recommender = app.Services.GetRequiredService<IEcoRecommendationService>();
+        recommender.Warmup();
+    }
+    catch (Exception ex)
+    {
+        var logger = app.Services.GetService<ILoggerFactory>()?.CreateLogger("Startup");
+        logger?.LogWarning(ex, "No se pudo inicializar el servicio ML en warmup.");
+    }
+}
+
 app.Run();
