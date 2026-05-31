@@ -146,31 +146,51 @@ public class EcoRecommendationService : IEcoRecommendationService
         {
             "🏠 Buen momento para actividades bajo techo. Aprovecha para organizar residuos, reutilizar materiales y ahorrar electricidad.",
             "🌧️ Está lluvioso afuera — ideal para actividades interiores: lee sobre reciclaje y planifica acciones sostenibles.",
-            "🛋️ Día para quedarse dentro. Aprovecha para reducir consumo eléctrico con gestos simples y reutilizar materiales."
+            "🛋️ Día para quedarse dentro. Aprovecha para reducir consumo eléctrico con gestos simples y reutilizar materiales.",
+            "🧹 Organiza un rincón de reciclaje en casa y separa correctamente los residuos: pequeño esfuerzo, gran impacto.",
+            "📚 Aprovecha para informarte sobre compostaje doméstico y reducir residuos orgánicos.",
+            "🔒 Revisa electrodomésticos en standby y desconecta lo innecesario: ahorras energía y dinero.",
+            "🎧 Haz actividades creativas en interior: reparar, reciclar o reutilizar materiales antes de desecharlos."
         },
         ["Movilidad"] = new[]
         {
             "🚲 Clima ideal para caminar, usar bicicleta o transporte público. Hoy puedes reducir tu huella de carbono.",
             "🚶 Aprovecha el buen tiempo: una caminata corta reemplaza viajes en coche y suma salud al planeta.",
-            "🛴 Considera compartir transporte o bicicleta: menos emisiones y más vida en la ciudad." 
+            "🛴 Considera compartir transporte o bicicleta: menos emisiones y más vida en la ciudad.",
+            "🚌 Planea tus trayectos en transporte público y evita viajes innecesarios en coche.",
+            "🚗 Si usas coche, comparte el viaje con alguien y reduce emisiones diarias.",
+            "🚴 Revisa y mantiene tu bicicleta: un paseo seguro es más probable con buen mantenimiento.",
+            "🏃 Transforma trayectos cortos en ejercicio: camina o usa patín, tu salud y el planeta lo agradecerán."
         },
         ["Energia"] = new[]
         {
             "💨 Aprovecha la ventilación natural y evita usar equipos eléctricos innecesarios. Cada kWh ahorrado cuenta.",
             "🔌 Evita picos de consumo: desconecta cargadores y ajusta termostatos para ahorrar energía.",
-            "💡 Usa iluminación eficiente y apaga lo que no uses — pequeño cambio, gran impacto." 
+            "💡 Usa iluminación eficiente y apaga lo que no uses — pequeño cambio, gran impacto.",
+            "⚡ Revisa la eficiencia energética de tus electrodomésticos y planifica recambios por modelos eficientes.",
+            "🧊 Mantén el refrigerador a la temperatura adecuada y evita abrirlo con frecuencia para ahorrar energía.",
+            "🕒 Programa temporizadores o enchufes inteligentes para optimizar el uso de equipos eléctricos.",
+            "📉 Monitorea tu consumo semanal para identificar oportunidades de ahorro concretas." 
         },
         ["Hidratacion"] = new[]
         {
             "☀️ Temperatura alta: hidrátate con botella reutilizable y evita plásticos de un solo uso.",
             "💧 Mantente hidratado y busca sombra. Lleva tu propia botella reutilizable para reducir residuos.",
-            "🌞 Evita actividades muy intensas al sol y recuerda proteger el entorno evitando plásticos desechables." 
+            "🌞 Evita actividades muy intensas al sol y recuerda proteger el entorno evitando plásticos desechables.",
+            "🍉 Consume frutas ricas en agua y lleva snacks reutilizables para reducir envases.",
+            "🧢 Usa sombrero y protector solar para protegerte y consumir menos recursos médicos por golpes de calor.",
+            "🚰 Ubica puntos de recarga de agua para rellenar botellas reutilizables en salidas largas.",
+            "🌡️ Planea actividades al aire libre en horas más frescas para cuidar tu salud y la del entorno." 
         },
         ["Default"] = new[]
         {
             "🌱 Mantén hábitos sostenibles: recicla, reutiliza, ahorra agua y reduce tu consumo energético.",
             "♻️ Pequeños gestos diarios suman: separa residuos y piensa en la reutilización antes de comprar.",
-            "🌿 Considera acciones locales: participa en limpiezas y promueve la movilidad activa." 
+            "🌿 Considera acciones locales: participa en limpiezas y promueve la movilidad activa.",
+            "🤝 Habla con vecinos y organiza iniciativas locales: sumar voluntades multiplica resultados.",
+            "📦 Reduce compras impulsivas: reutiliza y repara antes de reemplazar.",
+            "🌎 Infórmate y comparte buenas prácticas para que más personas adopten hábitos sostenibles.",
+            "📝 Haz una acción semanal: una pequeña meta enfocada mejora el impacto a largo plazo." 
         }
     };
 
