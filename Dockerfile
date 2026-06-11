@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY ["EcoWarriorMVC.csproj", "./"]
@@ -9,7 +9,7 @@ RUN dotnet restore "./EcoWarriorMVC.csproj"
 COPY . .
 RUN dotnet publish "./EcoWarriorMVC.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
 COPY --from=build /app/publish .

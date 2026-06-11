@@ -11,7 +11,8 @@ namespace EcoWarriorMVC.Services;
 public class EcoAiAgentService : IEcoAiAgentService
 {
     private readonly Kernel _kernel;
-    private readonly IChatCompletionService _chat;
+    private readonly IChatCompletionService? _chat;
+    private readonly bool _llmActivo;
     private readonly ILogger<EcoAiAgentService> _logger;
 
     private const string SystemPrompt = """
@@ -42,6 +43,7 @@ Reglas:
             apiKey != "YOUR_OPENAI_KEY_HERE")
         {
             builder.AddOpenAIChatCompletion(modelId, apiKey);
+            _llmActivo = true;
         }
         else
         {
@@ -51,7 +53,9 @@ Reglas:
 
         _kernel = builder.Build();
 
-        _chat = _kernel.GetRequiredService<IChatCompletionService>();
+        _chat = _llmActivo
+            ? _kernel.GetRequiredService<IChatCompletionService>()
+            : null;
 
         _kernel.Plugins.AddFromObject(
             new EcoConsejosPlugin(),
@@ -66,6 +70,11 @@ Reglas:
         string? contextoCiudad = null,
         CancellationToken ct = default)
     {
+        if (_chat is null)
+        {
+            return RespuestaFallback();
+        }
+
         try
         {
             var history = new ChatHistory(SystemPrompt);
@@ -121,6 +130,11 @@ Reglas:
             >= 1000 => "Agente sostenible",
             _ => "Nuevo recluta"
         };
+
+        if (_chat is null)
+        {
+            return FallbackReto(categoriaFavorita);
+        }
 
         var prompt =
             "Crea UN reto ecológico personalizado.\n\n" +

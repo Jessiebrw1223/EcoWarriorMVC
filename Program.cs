@@ -15,15 +15,36 @@ builder.Services.AddControllersWithViews()
             System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "No se encontró ConnectionStrings:DefaultConnection. Configúralo en appsettings.Development.json o en Render como ConnectionStrings__DefaultConnection.");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
+
+var redisConnection = builder.Configuration["Redis:ConnectionString"];
+if (!string.IsNullOrWhiteSpace(redisConnection))
+{
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = redisConnection;
+        options.InstanceName = "EcoWarriorMVC:";
+    });
+}
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+}
 
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(8);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".EcoWarrior.Session";
 });
 
 builder.Services.AddMemoryCache();
@@ -31,9 +52,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IBadgeService, BadgeService>();
+builder.Services.AddScoped<IEcoAiAgentService, EcoAiAgentService>();
 
 // ML.NET activo: el modelo se entrena de forma Lazy dentro del servicio.
-// No entrenar en Program.cs para evitar que Render cierre la app al iniciar.
 builder.Services.AddSingleton<IEcoRecommendationService, EcoRecommendationService>();
 
 builder.Services.AddHttpClient<IWeatherService, WeatherService>(client =>
@@ -66,6 +87,29 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
 
-DbInitializer.EnsureSeeded(app.Services);
+try
+{
+    DbInitializer.EnsureSeeded(app.Services);
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetService<ILoggerFactory>()?.CreateLogger("Startup");
+    logger?.LogError(ex, "No se pudo migrar o sembrar la base de datos. Revisa la cadena de conexión.");
+    throw;
+}
+
+if (app.Environment.IsDevelopment())
+{
+    try
+    {
+        var recommender = app.Services.GetRequiredService<IEcoRecommendationService>();
+        recommender.Warmup();
+    }
+    catch (Exception ex)
+    {
+        var logger = app.Services.GetService<ILoggerFactory>()?.CreateLogger("Startup");
+        logger?.LogWarning(ex, "No se pudo inicializar el servicio ML en warmup.");
+    }
+}
 
 app.Run();

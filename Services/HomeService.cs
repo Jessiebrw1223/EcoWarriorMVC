@@ -2,6 +2,7 @@ using EcoWarriorMVC.Data;
 using EcoWarriorMVC.Models;
 using EcoWarriorMVC.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace EcoWarriorMVC.Services;
 
@@ -47,6 +48,7 @@ public class HomeService(IProductoService productoService, ApplicationDbContext 
         return dbContext.Usuarios
             .AsNoTracking()
             .OrderByDescending(u => u.Puntos)
+            .ToList()
             .Select((u, indice) => new RankingResponse
             {
                 Posicion = indice + 1,
@@ -82,14 +84,17 @@ public class HomeService(IProductoService productoService, ApplicationDbContext 
     {
         var correoNormalizado = NormalizarCorreo(model.Correo);
         var usuario = dbContext.Usuarios
-            .AsNoTracking()
-            .FirstOrDefault(x =>
-                x.Correo == correoNormalizado &&
-                x.Contrasena == model.Contrasena);
+            .FirstOrDefault(x => x.Correo == correoNormalizado);
 
-        if (usuario is null)
+        if (usuario is null || !VerificarContrasena(model.Contrasena, usuario.Contrasena))
         {
             return null;
+        }
+
+        if (!usuario.Contrasena.StartsWith("PBKDF2$", StringComparison.Ordinal))
+        {
+            usuario.Contrasena = CrearHashContrasena(model.Contrasena);
+            dbContext.SaveChanges();
         }
 
         return new LoginResponse
@@ -117,7 +122,7 @@ public class HomeService(IProductoService productoService, ApplicationDbContext 
         {
             Nombre = request.Nombre,
             Correo = correoNormalizado,
-            Contrasena = request.Contrasena,
+            Contrasena = CrearHashContrasena(request.Contrasena),
             Puntos = 0,
             RetosCompletados = 0,
             CategoriaFavorita = "Sin categoria"
@@ -172,6 +177,46 @@ public class HomeService(IProductoService productoService, ApplicationDbContext 
         }
 
         return "Nuevo recluta";
+    }
+
+
+    private static string CrearHashContrasena(string contrasena)
+    {
+        var salt = RandomNumberGenerator.GetBytes(16);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(
+            contrasena,
+            salt,
+            100_000,
+            HashAlgorithmName.SHA256,
+            32);
+
+        return $"PBKDF2${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
+    }
+
+    private static bool VerificarContrasena(string contrasenaIngresada, string contrasenaAlmacenada)
+    {
+        if (!contrasenaAlmacenada.StartsWith("PBKDF2$", StringComparison.Ordinal))
+        {
+            // Compatibilidad con usuarios antiguos sembrados en texto plano.
+            return contrasenaAlmacenada == contrasenaIngresada;
+        }
+
+        var partes = contrasenaAlmacenada.Split('$');
+        if (partes.Length != 3)
+        {
+            return false;
+        }
+
+        var salt = Convert.FromBase64String(partes[1]);
+        var hashAlmacenado = Convert.FromBase64String(partes[2]);
+        var hashIngresado = Rfc2898DeriveBytes.Pbkdf2(
+            contrasenaIngresada,
+            salt,
+            100_000,
+            HashAlgorithmName.SHA256,
+            32);
+
+        return CryptographicOperations.FixedTimeEquals(hashIngresado, hashAlmacenado);
     }
 
     private static string NormalizarCorreo(string correo) => correo.Trim().ToLowerInvariant();

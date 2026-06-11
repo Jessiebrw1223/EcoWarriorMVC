@@ -116,6 +116,9 @@ public class HomeController(IProductoService productoService, IHomeService homeS
     public IActionResult Nosotros() => View();
 
     [HttpGet]
+    public IActionResult Avances() => View();
+
+    [HttpGet]
     public IActionResult Contacto() => View(new ContactoViewModel());
 
     [HttpPost]

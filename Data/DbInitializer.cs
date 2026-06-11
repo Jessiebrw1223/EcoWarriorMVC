@@ -1,5 +1,6 @@
 using EcoWarriorMVC.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace EcoWarriorMVC.Data;
 
@@ -66,7 +67,7 @@ public static class DbInitializer
                 {
                     Nombre = "Admin Eco",
                     Correo = "admin@ecowarrior.com",
-                    Contrasena = "Eco12345",
+                    Contrasena = CrearHashContrasena("Eco12345"),
                     Puntos = 3200,
                     RetosCompletados = 22,
                     CategoriaFavorita = "Energia verde"
@@ -75,7 +76,7 @@ public static class DbInitializer
                 {
                     Nombre = "Luisa Verde",
                     Correo = "luisa@ecowarrior.com",
-                    Contrasena = "Eco12345",
+                    Contrasena = CrearHashContrasena("Eco12345"),
                     Puntos = 2750,
                     RetosCompletados = 19,
                     CategoriaFavorita = "Reciclaje"
@@ -84,7 +85,7 @@ public static class DbInitializer
                 {
                     Nombre = "Marco Solar",
                     Correo = "marco@ecowarrior.com",
-                    Contrasena = "Eco12345",
+                    Contrasena = CrearHashContrasena("Eco12345"),
                     Puntos = 1980,
                     RetosCompletados = 14,
                     CategoriaFavorita = "Hogar sostenible"
@@ -163,4 +164,18 @@ public static class DbInitializer
 
         db.SaveChanges();
     }
+
+    private static string CrearHashContrasena(string contrasena)
+    {
+        var salt = RandomNumberGenerator.GetBytes(16);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(
+            contrasena,
+            salt,
+            100_000,
+            HashAlgorithmName.SHA256,
+            32);
+
+        return $"PBKDF2${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
+    }
+
 }
