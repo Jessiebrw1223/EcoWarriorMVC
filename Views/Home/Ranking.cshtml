@@ -1,0 +1,86 @@
+@model IReadOnlyList<EcoWarriorMVC.Models.RankingResponse>
+@{
+    ViewData["Title"] = "Ranking";
+    ViewData["IsDashboard"] = true;
+    var puntosPerfil = ViewData["PuntosUsuario"] as int? ?? 0;
+    var nombreActual = (ViewData["NombreUsuario"] as string) ?? "";
+}
+
+<section class="dashboard-shell ranking-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Clasificación real</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@puntosPerfil.ToString("N0") pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="retos-content ranking-content">
+            <section class="ranking-intro">
+                <h2>Tabla de posiciones mensual</h2>
+                <p>Ranking calculado desde PostgreSQL usando los puntos reales del usuario. Completa misiones para subir posiciones.</p>
+            </section>
+
+            <section class="ranking-table-card">
+                <div class="ranking-table-head">
+                    <span>Rango</span>
+                    <span>Nombre de usuario</span>
+                    <span>Nivel</span>
+                    <span>Puntos</span>
+                </div>
+
+                @foreach (var item in Model)
+                {
+                    var esActual = string.Equals(item.Usuario, nombreActual, StringComparison.OrdinalIgnoreCase);
+                    <div class="ranking-row @(esActual ? "highlight" : "")">
+                        <span class="ranking-rank @(item.Posicion == 1 ? "first" : "")">@item.Posicion</span>
+                        <div class="ranking-user-name">
+                            <span class="ranking-user-avatar @(esActual ? "me" : "")">@(esActual ? "Tu" : item.Usuario.Substring(0, 1).ToUpperInvariant())</span>
+                            <div>
+                                <strong>@(esActual ? "Tú (" + item.Usuario + ")" : item.Usuario)</strong>
+                                @if (esActual)
+                                {
+                                    <small>SUBIENDO</small>
+                                }
+                            </div>
+                        </div>
+                        <span class="ranking-level @(item.Posicion <= 2 ? "danger" : "success")">@item.Nivel</span>
+                        <strong class="ranking-points">@item.Puntos.ToString("N0")</strong>
+                    </div>
+                }
+            </section>
+
+            <section class="ranking-cta">
+                <div>
+                    <h3>¿Quieres subir en el ranking?</h3>
+                    <p>Completa misiones activas para sumar puntos reales a tu perfil.</p>
+                </div>
+                <a asp-controller="Home" asp-action="Retos">Ver misiones</a>
+            </section>
+        </main>
+    </div>
+</section>

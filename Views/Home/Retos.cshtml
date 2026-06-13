@@ -1,0 +1,148 @@
+@model RetosViewModel
+@{
+    ViewData["Title"] = "Retos";
+    ViewData["IsDashboard"] = true;
+    var puntos = Model.Perfil?.Puntos ?? 0;
+}
+
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Retos y Misiones</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@puntos pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="retos-content">
+            @if (TempData["MensajeExito"] is not null)
+            {
+                <div class="eco-alert success">@TempData["MensajeExito"]</div>
+            }
+            @if (TempData["MensajeError"] is not null)
+            {
+                <div class="eco-alert error">@TempData["MensajeError"]</div>
+            }
+
+            <section class="retos-hero">
+                <div>
+                    <h2>Desafios de la Semana</h2>
+                    <p>
+                        Completa misiones reales, suma puntos automáticamente y desbloquea mejores posiciones en el ranking.
+                    </p>
+                </div>
+                <a class="new-challenge-btn" href="#crear-mision">+ Crear misión</a>
+            </section>
+
+            <section class="retos-grid">
+                @foreach (var reto in Model.Retos)
+                {
+                    var level = reto.Dificultad.ToLowerInvariant();
+                    var isHard = level.Contains("hard") || level.Contains("alta");
+                    <article class="reto-card @(isHard ? "reto-card-dark" : "")">
+                        <span class="reto-level @(level.Contains("easy") || level.Contains("facil") ? "easy" : level.Contains("hard") || level.Contains("alta") ? "hard" : "medium")">@reto.Dificultad</span>
+                        <h3>@reto.Titulo</h3>
+                        <p>@reto.Descripcion</p>
+                        <div class="reto-meta">
+                            <span>@reto.Participantes participantes • @reto.Categoria</span>
+                            <strong>@reto.Progreso%</strong>
+                        </div>
+                        <div class="reto-progress"><span style="width:@reto.Progreso%"></span></div>
+                        <div class="reto-footer">
+                            <em>+ @reto.Puntos pts</em>
+                            <form asp-controller="Home" asp-action="CompletarReto" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="retoId" value="@reto.Id" />
+                                <button type="submit" disabled="@reto.Completado">
+                                    @(reto.Completado ? "Completado" : "Completar")
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                }
+            </section>
+
+            <section id="crear-mision" class="panel-card create-mission-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Crear nueva misión ecológica</h2>
+                        <p>Agrega actividades para que el sistema deje de ser estático y tenga flujo real.</p>
+                    </div>
+                    <span class="status-chip">Dinámico</span>
+                </div>
+
+                <form asp-controller="Home" asp-action="CrearReto" method="post" class="mission-form">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        <label asp-for="NuevoReto.Titulo">Título</label>
+                        <input asp-for="NuevoReto.Titulo" placeholder="Ejemplo: Ahorrar agua por 24 horas" />
+                        <span asp-validation-for="NuevoReto.Titulo"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="NuevoReto.Descripcion">Descripción</label>
+                        <textarea asp-for="NuevoReto.Descripcion" placeholder="Describe qué debe hacer el usuario para completar la misión"></textarea>
+                        <span asp-validation-for="NuevoReto.Descripcion"></span>
+                    </div>
+
+                    <div class="mission-form-grid">
+                        <div>
+                            <label asp-for="NuevoReto.Puntos">Puntos</label>
+                            <input asp-for="NuevoReto.Puntos" type="number" min="10" max="1000" />
+                        </div>
+                        <div>
+                            <label asp-for="NuevoReto.Dificultad">Dificultad</label>
+                            <select asp-for="NuevoReto.Dificultad">
+                                <option>Easy</option>
+                                <option>Medium</option>
+                                <option>Hard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label asp-for="NuevoReto.Categoria">Categoría</label>
+                            <select asp-for="NuevoReto.Categoria">
+                                <option>Reciclaje</option>
+                                <option>Agua</option>
+                                <option>Energia</option>
+                                <option>Movilidad</option>
+                                <option>CO2</option>
+                                <option>Residuos</option>
+                                <option>ProductoEco</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-button">Guardar misión</button>
+                </form>
+            </section>
+        </main>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

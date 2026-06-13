@@ -1,0 +1,200 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["IsDashboard"] = true;
+
+    var puntos = Model.Perfil?.Puntos ?? 0;
+    var retosCompletados = Model.Perfil?.RetosCompletados ?? 0;
+    var nivel = Model.Perfil?.Nivel ?? "Nuevo recluta";
+}
+
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link active" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Vista General</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@puntos pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <section class="welcome-row">
+                <div>
+                    <h1>Hola, @ViewData["PrimerNombreUsuario"]! &#127811;</h1>
+                    <p>Has ahorrado aproximadamente <strong>3.2 kg de CO2</strong> este mes.</p>
+                </div>
+                <a class="share-btn" asp-controller="Home" asp-action="Retos">Ver misiones</a>
+            </section>
+
+            <article class="panel-card weather-card">
+                <form method="get" asp-controller="Home" asp-action="Index" class="weather-search">
+                    <div>
+                        <label for="ciudad">Buscar clima por ciudad, provincia o departamento del Peru</label>
+                        <input id="ciudad" name="ciudad" value="@Model.CiudadConsulta" placeholder="Ejemplo: Lima, Cusco, Arequipa, Piura..." />
+                    </div>
+                    <button type="submit">Buscar clima</button>
+                </form>
+
+                @if (Model.Clima?.ClimaActual is not null)
+                {
+                    <div class="weather-header">
+                        <div class="weather-location">
+                            <h3>🌍 @Model.Clima.Ciudad</h3>
+                            <p>@Model.Clima.Pais @(!string.IsNullOrWhiteSpace(Model.Clima.NombreRegion) ? $"• {Model.Clima.NombreRegion}" : "")</p>
+                            @if (Model.Clima.ModoLocal)
+                            {
+                                <small class="weather-local-note">@Model.Clima.Observacion</small>
+                            }
+                        </div>
+                        <div class="weather-status">
+                            <span class="status-chip">@(Model.Clima.ModoLocal ? "MODO LOCAL" : Model.Clima.ClimaActual.EstadoClima)</span>
+                        </div>
+                    </div>
+
+                    <div class="weather-body">
+                        <div class="temperature-display">
+                            <div class="main-temp">
+                                <span class="temp-value">@Model.Clima.ClimaActual.Temperatura.ToString("0")</span>
+                                <span class="temp-unit">°C</span>
+                            </div>
+                            <div class="temp-feel">
+                                Sensación térmica<br />
+                                <strong>@Model.Clima.ClimaActual.SensacionTermica.ToString("0")°C</strong>
+                            </div>
+                        </div>
+
+                        <div class="weather-metrics">
+                            <div class="metric">
+                                <span class="metric-label">💨 Viento</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.VelocidadViento.ToString("0") km/h</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">💧 Humedad</span>
+                                <span class="metric-value">@Model.Clima.ClimaActual.Humedad.ToString("0")%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weather-recommendation">
+                        <p>🌱 <strong>@(Model.Clima.ModoLocal ? "Recomendación eco local:" : "Recomendación eco (ML.NET):")</strong> @Model.Clima.MensajeEco</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="weather-empty">
+                        <p>📍 Ingresa una ciudad de Peru para consultar el clima.</p>
+                    </div>
+                }
+            </article>
+
+            <section class="kpi-grid">
+                <article class="kpi-card">
+                    <small>Puntos Totales</small>
+                    <strong>@puntos</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Retos completados</small>
+                    <strong>@retosCompletados</strong>
+                </article>
+                <article class="kpi-card">
+                    <small>Reduccion de CO2</small>
+                    <strong>3.2 kg</strong>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="left-column">
+                    <article class="panel-card progress-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Progreso de Eco Warrior</h2>
+                                <p>@nivel - sigue completando misiones para subir de rango</p>
+                            </div>
+                            <span class="status-chip">Activo</span>
+                        </div>
+                        <div class="progress-row">
+                            <span>Progreso General</span>
+                            <strong>@Math.Min(100, puntos / 40)%</strong>
+                        </div>
+                        <div class="meter">
+                            <span style="width:@Math.Min(100, puntos / 40)%"></span>
+                        </div>
+                    </article>
+
+                    <article class="panel-card map-card">
+                        <div class="card-head">
+                            <div>
+                                <h3>Misiones activas cerca de ti</h3>
+                                <p>Elige una misión y complétala para ganar puntos reales.</p>
+                            </div>
+                            <a asp-controller="Home" asp-action="Retos">Ver lista</a>
+                        </div>
+                        <div class="map-box">Mapa ecológico</div>
+                        <div class="map-footer">
+                            <div>
+                                <strong>Zona de @Model.CiudadConsulta</strong>
+                                <small>@Model.Retos.Count eventos activos hoy</small>
+                            </div>
+                            <a class="ranking-btn" asp-controller="Home" asp-action="Retos">Unirse</a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="right-column">
+                    @foreach (var reto in Model.Retos.Take(1))
+                    {
+                        <article class="challenge-card">
+                            <span class="timer">+ @reto.Puntos pts</span>
+                            <h3>@reto.Titulo</h3>
+                            <p>@reto.Descripcion</p>
+                            <form asp-controller="Home" asp-action="CompletarReto" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="retoId" value="@reto.Id" />
+                                <button type="submit">@(reto.Completado ? "Completado" : "Aceptar Reto")</button>
+                            </form>
+                        </article>
+                    }
+
+                    <article class="panel-card leaderboard-card">
+                        <h3>Lideres</h3>
+                        <ul>
+                            @foreach (var item in Model.Ranking)
+                            {
+                                <li>
+                                    <span>@item.Posicion</span>
+                                    <strong>@item.Usuario</strong>
+                                    <em>@item.Puntos.ToString("N0")</em>
+                                </li>
+                            }
+                        </ul>
+                        <a class="ranking-btn" asp-controller="Home" asp-action="Ranking">Ranking Completo</a>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</section>

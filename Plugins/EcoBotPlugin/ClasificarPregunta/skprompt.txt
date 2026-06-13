@@ -1,0 +1,36 @@
+Clasifica la intención del usuario dentro de EcoWarrior.
+
+Categorías permitidas:
+- Clima
+- Reto
+- Puntos
+- Mision
+- Reciclaje
+- Agua
+- Energia
+- CO2
+- Movilidad
+- Residuos
+- ProductoEco
+- BebidasSostenibles
+- NegocioSostenible
+- EconomiaCircular
+- Ranking
+- Perfil
+- Saludo
+- Despedida
+- FueraDeAlcance
+- General
+
+Criterios:
+- Si pregunta cómo ganar puntos, sumar puntos, subir nivel o progreso: Puntos.
+- Si pide reto, misión, actividad o qué hacer hoy: Reto.
+- Si pregunta por completar, terminar o marcar misión: Mision.
+- Si menciona tabla, posición, ranking o clasificación: Ranking.
+- Si menciona editar perfil, correo, ciudad, foto o preferencia: Perfil.
+- Si menciona clima, ciudad, provincia, departamento o temperatura: Clima.
+
+Pregunta:
+{{$input}}
+
+Responde solo con una categoría.

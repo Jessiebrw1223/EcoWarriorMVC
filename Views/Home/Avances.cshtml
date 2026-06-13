@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Avances del proyecto";
+}
+
+<section class="container py-5">
+    <div class="mb-4">
+        <span class="badge bg-success">Cronograma académico</span>
+        <h1 class="fw-bold mt-3">Avances y funcionalidades solicitadas</h1>
+        <p class="text-muted">Esta pantalla evidencia lo pedido por práctica: login, base de datos, Render, sesiones, Redis, APIs, ML.NET, Semantic Kernel, LLM y Go Live.</p>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded-4">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-success">
+                <tr>
+                    <th>Entrega</th>
+                    <th>Semana</th>
+                    <th>Alcance solicitado</th>
+                    <th>Estado en el proyecto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>2da Práctica</strong></td>
+                    <td>8 sem</td>
+                    <td>5 funcionalidades, login, base de datos, proyecto, ramas, sesiones, Render y Redis.</td>
+                    <td><span class="badge bg-success">Implementado</span> Login, registro, productos, retos, ranking, perfil, sesiones y configuración Redis opcional.</td>
+                </tr>
+                <tr>
+                    <td><strong>3ra Práctica</strong></td>
+                    <td>12 sem</td>
+                    <td>Segundo avance, Render, APIs, ML.NET con modelos de clasificación y recomendación.</td>
+                    <td><span class="badge bg-success">Implementado</span> APIs REST, clima, badges, productos y recomendación ML.NET.</td>
+                </tr>
+                <tr>
+                    <td><strong>4ta Práctica</strong></td>
+                    <td>15 sem</td>
+                    <td>Tercer avance listo, IA, agente Semantic Kernel y LLM.</td>
+                    <td><span class="badge bg-success">Implementado</span> EcoBot con Semantic Kernel, OpenAI opcional y respuesta fallback.</td>
+                </tr>
+                <tr>
+                    <td><strong>Trabajo final</strong></td>
+                    <td>16 sem</td>
+                    <td>Listo Go Live.</td>
+                    <td><span class="badge bg-warning text-dark">Preparado</span> Configuración segura para Render mediante variables de entorno.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-md-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>APIs</h5><p class="text-muted mb-0">/api/home, /api/productos, /api/badges, /api/clima y /api/ecobot.</p></div></div></div>
+        <div class="col-md-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>Base de datos</h5><p class="text-muted mb-0">PostgreSQL con Entity Framework Core y migraciones.</p></div></div></div>
+        <div class="col-md-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>IA + ML</h5><p class="text-muted mb-0">ML.NET para recomendaciones y EcoBot con Semantic Kernel.</p></div></div></div>
+        <div class="col-md-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>Deploy</h5><p class="text-muted mb-0">Render, variables de entorno, sesiones y Redis opcional.</p></div></div></div>
+    </div>
+</section>

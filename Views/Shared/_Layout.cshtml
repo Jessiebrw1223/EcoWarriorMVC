@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EcoWarrior MVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var isDashboard = ViewData["IsDashboard"] as bool? == true;
+    }
+
+    @if (!isDashboard)
+    {
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark eco-navbar shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">EcoWarrior MVC</a>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="mainNav">
+                        <ul class="navbar-nav ms-auto gap-lg-2">
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Productos" asp-action="Index">Productos</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Nosotros">Nosotros</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Avances">Avances</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    }
+
+    <main>
+        @RenderBody()
+    </main>
+
+    @if (!isDashboard)
+    {
+        <footer class="border-top footer text-muted py-4 mt-5">
+            <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+                <span>© 2026 - EcoWarrior MVC</span>
+                <span>Base MVC inspirada en EcoWarrior.</span>
+            </div>
+        </footer>
+    }
+
+    <!-- Chatbot EcoBot IA -->
+    <div class="eco-chatbot">
+        <button id="chatbotToggle" class="chatbot-btn" type="button" aria-label="Abrir EcoBot">🤖</button>
+
+        <div id="chatbotBox" class="chatbot-box">
+            <div class="chatbot-header">
+                <div>
+                    <strong>EcoBot IA</strong>
+                    <span id="chatbotStatus" class="chatbot-status online">● conectado</span>
+                </div>
+                <button id="chatbotClose" type="button" aria-label="Cerrar EcoBot">×</button>
+            </div>
+
+            <div id="chatbotMessages" class="chatbot-messages">
+                <div class="bot-msg">
+                    ¡Hola! 👋 Soy EcoBot, tu asistente ecológico. Puedo ayudarte con clima en Perú, retos, puntos, reciclaje, agua, energía y CO2. ¿Qué te gustaría hacer hoy?
+                </div>
+            </div>
+
+            <div class="chatbot-suggestions" id="chatbotSuggestions">
+                <button type="button" data-question="¿Qué puedo hacer en Lima hoy?">Clima Lima</button>
+                <button type="button" data-question="Dame un reto ecológico para ganar puntos">Reto</button>
+                <button type="button" data-question="¿Cómo gano puntos en EcoWarrior?">Puntos</button>
+                <button type="button" data-question="¿Cómo reciclo botellas y envases?">Reciclaje</button>
+            </div>
+
+            <div class="chatbot-input">
+                <input id="chatbotInput" type="text" placeholder="Escribe tu pregunta ecológica..." autocomplete="off" />
+                <button id="chatbotSend" type="button">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("chatbotToggle");
+            const box = document.getElementById("chatbotBox");
+            const closeBtn = document.getElementById("chatbotClose");
+            const sendBtn = document.getElementById("chatbotSend");
+            const input = document.getElementById("chatbotInput");
+            const messages = document.getElementById("chatbotMessages");
+            const status = document.getElementById("chatbotStatus");
+            const suggestions = document.getElementById("chatbotSuggestions");
+            const storageKey = "ecobot_history_v2";
+
+            let historial = cargarHistorial();
+            restaurarHistorial();
+
+            toggle.onclick = () => {
+                box.classList.toggle("show");
+                input.focus();
+            };
+
+            closeBtn.onclick = () => box.classList.remove("show");
+
+            sendBtn.onclick = () => enviarMensaje();
+
+            input.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") enviarMensaje();
+            });
+
+            suggestions?.addEventListener("click", function (e) {
+                const btn = e.target.closest("button[data-question]");
+                if (!btn) return;
+                input.value = btn.dataset.question;
+                enviarMensaje();
+            });
+
+            async function enviarMensaje() {
+                const pregunta = input.value.trim();
+                if (!pregunta) return;
+
+                agregarMensaje(pregunta, "user-msg", true);
+                input.value = "";
+
+                const typing = agregarMensaje("EcoBot está pensando...", "bot-msg typing", false);
+                cambiarEstado("retry", "● respondiendo");
+
+                try {
+                    const data = await consultarEcoBot(pregunta);
+                    typing.remove();
+
+                    const respuesta = data.respuesta || data.message || generarRespuestaLocal(pregunta);
+                    agregarMensaje(respuesta, "bot-msg", true);
+                    cambiarEstado("online", "● conectado");
+                } catch (error) {
+                    typing.remove();
+                    const respuestaLocal = generarRespuestaLocal(pregunta);
+                    agregarMensaje(respuestaLocal, "bot-msg", true);
+                    cambiarEstado("offline", "● modo local");
+                }
+            }
+
+            async function consultarEcoBot(pregunta) {
+                let ultimoError;
+
+                for (let intento = 1; intento <= 3; intento++) {
+                    try {
+                        const controller = new AbortController();
+                        const timeout = setTimeout(() => controller.abort(), 15000);
+
+                        const response = await fetch("/api/ecobot/consultar", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                pregunta: pregunta,
+                                ciudad: detectarCiudad(pregunta) || "Lima",
+                                historial: historial.slice(-8)
+                            }),
+                            signal: controller.signal
+                        });
+
+                        clearTimeout(timeout);
+
+                        if (!response.ok) throw new Error("HTTP " + response.status);
+                        return await response.json();
+                    } catch (error) {
+                        ultimoError = error;
+                        cambiarEstado("retry", "● reintentando " + intento + "/3");
+                        await esperar(900 * intento);
+                    }
+                }
+
+                throw ultimoError;
+            }
+
+            function agregarMensaje(texto, clase, guardar) {
+                const div = document.createElement("div");
+                div.className = clase;
+                div.textContent = texto;
+                messages.appendChild(div);
+                messages.scrollTop = messages.scrollHeight;
+
+                if (guardar && !clase.includes("typing")) {
+                    const rol = clase.includes("user") ? "usuario" : "bot";
+                    historial.push({ rol: rol, texto: texto });
+                    historial = historial.slice(-20);
+                    localStorage.setItem(storageKey, JSON.stringify(historial));
+                }
+
+                return div;
+            }
+
+            function cargarHistorial() {
+                try {
+                    return JSON.parse(localStorage.getItem(storageKey) || "[]");
+                } catch {
+                    return [];
+                }
+            }
+
+            function restaurarHistorial() {
+                if (!historial.length) return;
+
+                messages.innerHTML = "";
+                historial.slice(-8).forEach(m => {
+                    const clase = m.rol === "usuario" ? "user-msg" : "bot-msg";
+                    agregarMensaje(m.texto, clase, false);
+                });
+            }
+
+            function cambiarEstado(tipo, texto) {
+                status.className = "chatbot-status " + tipo;
+                status.textContent = texto;
+            }
+
+            function detectarCiudad(texto) {
+                const ciudades = ["lima", "arequipa", "cusco", "cuzco", "piura", "tumbes", "trujillo", "chiclayo", "iquitos", "tacna", "puno", "huancayo", "ica", "tarapoto", "ayacucho", "huanuco", "moquegua", "abancay", "cajamarca"];
+                const normalizado = texto.toLowerCase();
+                const ciudad = ciudades.find(c => normalizado.includes(c));
+                return ciudad ? ciudad.charAt(0).toUpperCase() + ciudad.slice(1) : null;
+            }
+
+            function generarRespuestaLocal(pregunta) {
+                const texto = pregunta.toLowerCase();
+
+                if (texto.includes("punto")) {
+                    return "⭐ Puedes ganar puntos completando misiones ecológicas: reciclar, ahorrar agua, usar transporte sostenible o reducir plástico. ¿Quieres una misión rápida para sumar puntos hoy?";
+                }
+
+                if (texto.includes("reto") || texto.includes("mision")) {
+                    return "🎯 Reto sugerido: evita plásticos de un solo uso durante 24 horas y separa tus residuos reciclables. ¿Quieres otro reto de agua, energía o transporte?";
+                }
+
+                if (texto.includes("clima") || texto.includes("lima")) {
+                    return "🌦️ Puedo ayudarte con recomendaciones según ciudad. En Lima conviene ahorrar agua, caminar trayectos cortos y usar transporte público. ¿Qué ciudad quieres revisar?";
+                }
+
+                if (texto.includes("recicl")) {
+                    return "♻️ Para reciclar bien, separa papel, cartón, vidrio, latas y botellas limpias y secas. ¿Quieres una guía para casa o universidad?";
+                }
+
+                if (texto.includes("gracias") || texto.includes("chau") || texto.includes("adios")) {
+                    return "¡De nada! 🌱 Cuando quieras puedo ayudarte con una misión, puntos, ranking o una recomendación ecológica según tu ciudad. ¿Quieres una última actividad rápida?";
+                }
+
+                return "🌱 Estoy en modo local, pero puedo ayudarte con clima, retos, puntos, reciclaje, agua, energía, ranking y CO2. ¿Qué tema quieres trabajar?";
+            }
+
+            function esperar(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

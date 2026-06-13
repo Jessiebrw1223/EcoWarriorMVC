@@ -1,0 +1,25 @@
+@model EcoWarriorMVC.Models.Producto
+@{
+    ViewData["Title"] = "Detalle de producto";
+}
+
+<section class="container py-5">
+    <a asp-action="Index" class="btn btn-link px-0 mb-3">← Volver a productos</a>
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-6">
+            <img src="@Model.ImagenUrl" alt="@Model.Nombre" class="img-fluid rounded-4 shadow" onerror="this.src='https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80'" />
+        </div>
+        <div class="col-lg-6">
+            <span class="badge bg-success mb-3">@Model.Categoria</span>
+            <h1 class="fw-bold">@Model.Nombre</h1>
+            <p class="lead text-muted">@Model.Descripcion</p>
+            <h2 class="text-success">S/ @Model.Precio.ToString("0.00")</h2>
+            <p><strong>Stock disponible:</strong> @Model.Stock</p>
+            <p><strong>Estado:</strong> @(Model.Activo ? "Activo" : "Inactivo")</p>
+            <div class="d-flex gap-2">
+                <a class="btn btn-success" asp-action="Editar" asp-route-id="@Model.Id">Editar producto</a>
+                <a class="btn btn-outline-secondary" asp-action="Index">Ir al catálogo</a>
+            </div>
+        </div>
+    </div>
+</section>

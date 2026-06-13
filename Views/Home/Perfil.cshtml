@@ -1,0 +1,196 @@
+@model PerfilViewModel
+@{
+    ViewData["Title"] = "Perfil";
+    ViewData["IsDashboard"] = true;
+    var perfil = Model.Perfil;
+}
+
+<link rel="stylesheet" href="~/css/perfil.css" />
+
+<section class="dashboard-shell profile-page">
+    <aside class="dashboard-sidebar">
+        <div>
+            <div class="brand-mark">EcoWarrior</div>
+            <nav class="side-nav">
+                <a class="side-link" asp-controller="Home" asp-action="Index">Panel</a>
+                <a class="side-link" asp-controller="Home" asp-action="Retos">Retos</a>
+                <a class="side-link" asp-controller="Home" asp-action="Ranking">Ranking</a>
+                <a class="side-link active" asp-controller="Home" asp-action="Perfil">Perfil</a>
+            </nav>
+            <form asp-controller="Home" asp-action="CerrarSesion" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="dashboard-main">
+        <header class="dashboard-header">
+            <div class="dashboard-subtitle">Mi Perfil</div>
+            <div class="dashboard-user">
+                <div class="user-points">
+                    <span>ECO WARRIOR</span>
+                    <strong>@(perfil?.Puntos ?? 0) pts</strong>
+                </div>
+                <div>
+                    <strong>@ViewData["NombreUsuario"]</strong>
+                    <small>@ViewData["UsernameUsuario"]</small>
+                </div>
+                <div class="avatar-pill">@ViewData["InicialesUsuario"]</div>
+            </div>
+        </header>
+
+        <main class="retos-content profile-content">
+            @if (TempData["MensajeExito"] is not null)
+            {
+                <div class="eco-alert success">@TempData["MensajeExito"]</div>
+            }
+            @if (TempData["MensajeError"] is not null)
+            {
+                <div class="eco-alert error">@TempData["MensajeError"]</div>
+            }
+
+            <section class="profile-preview">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar large">@ViewData["InicialesUsuario"]</div>
+                        <div class="profile-info">
+                            <h1 class="profile-name">@(perfil?.Nombre ?? "Eco Warrior")</h1>
+                            <p class="profile-title">@(perfil?.Nivel ?? "Nuevo recluta")</p>
+                            <p class="profile-location">📍 @(perfil?.Ciudad ?? "Lima"), Perú • Categoría favorita: @(perfil?.CategoriaFavorita ?? "General")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <strong>@(perfil?.Puntos ?? 0)</strong>
+                        <span>Puntos Totales</span>
+                    </div>
+                    <div class="stat-box">
+                        <strong>@(perfil?.RetosCompletados ?? 0)</strong>
+                        <span>Retos completados</span>
+                    </div>
+                    <div class="stat-box">
+                        <strong>@Model.RetosCompletados.Count</strong>
+                        <span>Misiones registradas</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="profile-section profile-edit-card">
+                <h2>Editar perfil</h2>
+                <form asp-controller="Home" asp-action="Perfil" method="post" class="mission-form">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        <label asp-for="Editar.Nombre">Nombre visible</label>
+                        <input asp-for="Editar.Nombre" placeholder="Tu nombre" />
+                        <span asp-validation-for="Editar.Nombre"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Editar.Correo">Correo</label>
+                        <input asp-for="Editar.Correo" placeholder="correo@ejemplo.com" />
+                        <span asp-validation-for="Editar.Correo"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Editar.Ciudad">Ciudad o departamento</label>
+                        <input asp-for="Editar.Ciudad" placeholder="Lima, Cusco, Tumbes..." />
+                        <span asp-validation-for="Editar.Ciudad"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Editar.FotoUrl">Foto de perfil (URL opcional)</label>
+                        <input asp-for="Editar.FotoUrl" placeholder="https://..." />
+                        <span asp-validation-for="Editar.FotoUrl"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Editar.CategoriaFavorita">Categoría favorita</label>
+                        <select asp-for="Editar.CategoriaFavorita">
+                            <option>Reciclaje</option>
+                            <option>Agua</option>
+                            <option>Energia</option>
+                            <option>Movilidad</option>
+                            <option>CO2</option>
+                            <option>Residuos</option>
+                            <option>ProductoEco</option>
+                            <option>General</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="login-button">Guardar cambios</button>
+                </form>
+            </section>
+
+            <section class="profile-section">
+                <h2>Mis Insignias</h2>
+                <div class="badges-grid">
+                    <div class="badge-card">
+                        <div class="badge-icon">🌱</div>
+                        <h3>Seed Sower</h3>
+                        <p>Nivel ecológico activo</p>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">♻️</div>
+                        <h3>Plastic Hero</h3>
+                        <p>Retos de reciclaje y residuos</p>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">🚴</div>
+                        <h3>Bike Enthusiast</h3>
+                        <p>Movilidad sostenible</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="profile-section">
+                <h2>Actividad reciente</h2>
+                <div class="activity-list">
+                    @if (Model.RetosCompletados.Any())
+                    {
+                        @foreach (var reto in Model.RetosCompletados.Take(5))
+                        {
+                            <div class="activity-item">
+                                <div class="activity-icon success">✓</div>
+                                <div class="activity-content">
+                                    <strong>@reto.Titulo completado</strong>
+                                    <p>+ @reto.Puntos puntos • @reto.Categoria</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="activity-item">
+                            <div class="activity-icon">!</div>
+                            <div class="activity-content">
+                                <strong>Aún no completaste misiones</strong>
+                                <p>Ve a Retos y completa tu primera misión para sumar puntos.</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="profile-section next-goal">
+                <div class="goal-card">
+                    <h3>Siguiente Meta</h3>
+                    <h2>Guardián Verde</h2>
+                    <p>Completa más misiones para subir de nivel y mejorar tu ranking.</p>
+                    <div class="goal-progress">
+                        <div class="goal-progress-bar">
+                            <div class="goal-progress-fill" style="width:@Math.Min(100, (perfil?.Puntos ?? 0) / 20)%"></div>
+                        </div>
+                        <span>@Math.Min(100, (perfil?.Puntos ?? 0) / 20)% completado</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

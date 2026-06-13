@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "type": "completion",
+  "description": "Agente EcoBot para responder consultas del sitio EcoWarrior con contexto de clima, retos, puntos y sostenibilidad.",
+  "completion": {
+    "max_tokens": 420,
+    "temperature": 0.75,
+    "top_p": 0.85,
+    "presence_penalty": 0.15,
+    "frequency_penalty": 0.25
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "input",
+        "description": "Pregunta del usuario",
+        "defaultValue": ""
+      },
+      {
+        "name": "categoria",
+        "description": "Categoría ML.NET",
+        "defaultValue": "General"
+      },
+      {
+        "name": "ciudad",
+        "description": "Ciudad, provincia o departamento",
+        "defaultValue": "Lima"
+      }
+    ]
+  }
+}

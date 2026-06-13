@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "type": "completion",
+  "description": "Genera retos/misiones ecológicas personalizadas.",
+  "completion": {
+    "max_tokens": 260,
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "presence_penalty": 0.1,
+    "frequency_penalty": 0.1
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "puntos",
+        "description": "Puntos actuales",
+        "defaultValue": "0"
+      },
+      {
+        "name": "categoria",
+        "description": "Categoría de reto",
+        "defaultValue": "General"
+      },
+      {
+        "name": "ciudad",
+        "description": "Ciudad",
+        "defaultValue": "Lima"
+      }
+    ]
+  }
+}
